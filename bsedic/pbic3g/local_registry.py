@@ -28,13 +28,14 @@ def recursive_dynamic_import(package_name: str) -> list[str]:
     adjusted_package_name = package_name.replace("-", "_")
     try:
         module = importlib.import_module(adjusted_package_name)
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as mnfe:
         # TODO: Add code to try and find correct module name via accessing `top_level.txt`,
         #  and getting the correct module name
         # find top-level.txt
         # find correct module name
         # return recursive_dynamic_import(correct_module_name)
-        raise ModuleNotFoundError(f"module {adjusted_package_name} not found")
+        err_msg = f"module {adjusted_package_name} not found"
+        raise ModuleNotFoundError(err_msg) from mnfe
     # class_members = inspect.getmembers(module, inspect.isclass)
     # for class_name, clazz in class_members:
     #     if not (issubclass(clazz, Process) or issubclass(clazz, Step)) or (clazz in [Process, Step, Composite]):

@@ -16,7 +16,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "process-bigraph>=0.0.46",
+    "pydantic>=2.12.3",
     "spython>=0.3.14",
 ]
 
@@ -116,4 +116,3 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["bsedic"]
-

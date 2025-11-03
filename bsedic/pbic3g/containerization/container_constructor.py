@@ -1,14 +1,14 @@
 import re
 from typing import Optional
 
-from bsander.bsandr_utils.input_types import (
+from bsedic.pbic3g.containerization.container_file import (
+    get_generic_dockerfile_template,
+    pull_substitution_keys_from_document,
+)
+from bsedic.utils.input_types import (
     ContainerizationFileRepr,
     ExperimentPrimaryDependencies,
     ProgramArguments,
-)
-from bsander.pbic3g.containerization.container_file import (
-    get_generic_dockerfile_template,
-    pull_substitution_keys_from_document,
 )
 
 
@@ -52,7 +52,8 @@ ENV PATH=/opt/conda/bin:$PATH
             filled_section = conda_section.replace("$${#DEPENDENCIES}", dependency_str)
             docker_template = docker_template.replace(match_target, filled_section)
         else:
-            raise ValueError(f"unknown field in template dockerfile: {desired_field}")
+            err_msg = f"unknown field in template dockerfile: {desired_field}"
+            raise ValueError(err_msg)
 
     return ContainerizationFileRepr(representation=docker_template), experiment_deps
 
@@ -63,8 +64,8 @@ def generate_necessary_values() -> list[str]:
 
 # Due to an assumption that we can not have all dependencies included
 # in the same python environment, we need a solid address protocol to assume.
-# going with: `pypi:<package_name>[<version_statement>]@<python_module_path_to_class_def>`
-#         ex: "pypi:copasi-basico[~0.8]@basico.model_io.load_model" (if this was a class, and not a function)
+# going with: `python:{source}<{package_name}>[{version_statement}]@{python_module_path_to_class_def}`
+#         ex: "python: pypi<copasi-basico[~0.8]>@basico.model_io.load_model" (if this was a class, and not a function)
 def determine_dependencies(  # noqa: C901
     string_to_search: str, whitelist_entries: Optional[list[str]] = None
 ) -> tuple[ExperimentPrimaryDependencies, str]:
@@ -74,7 +75,8 @@ def determine_dependencies(  # noqa: C901
         for whitelist_entry in whitelist_entries:
             entry = whitelist_entry.split("::")
             if len(entry) != 2:
-                raise ValueError(f"invalid whitelist entry: {whitelist_entry}")
+                err_msg = f"invalid whitelist entry: {whitelist_entry}"
+                raise ValueError(err_msg)
             source, package = (entry[0], entry[1])
             if source not in whitelist_mapping:
                 whitelist_mapping[source] = set()
@@ -91,35 +93,36 @@ def determine_dependencies(  # noqa: C901
     import_name_legal_syntax = r"[A-Za-z_]\w*(\.[A-Za-z_]\w*)*"
     known_sources = ["pypi", "conda"]
     approved_dependencies: dict[str, list[str]] = {source: [] for source in known_sources}
-    regex_pattern = f"python:({source_name_legal_syntax})<({package_name_legal_syntax})({version_string_legal_syntax})?>@({import_name_legal_syntax})"  #  noqa: E501
+    regex_pattern = f"python:({source_name_legal_syntax})<({package_name_legal_syntax})({version_string_legal_syntax})?>@({import_name_legal_syntax})"
     adjusted_search_string = str(string_to_search)
     matches = re.findall(regex_pattern, string_to_search)
     if len(matches) == 0:
         local_protocol_matches = re.findall(f"local:{import_name_legal_syntax}", string_to_search)
         if len(local_protocol_matches) == 0:
-            raise ValueError("No dependencies found in document; unable to generate environment.")
+            err_msg = "No dependencies found in document; unable to generate environment."
+            raise ValueError(err_msg)
         match_str_list: str = ",".join([str(match) for match in matches])
         if len(match_str_list) != 0:  # For some reason, we can get a single "match" that's empty...
-            raise ValueError(
-                f"Document is using the following local protocols: `{match_str_list}`; unable to determine needed environment."  # noqa: E501
-            )
+            err_msg = f"Document is using the following local protocols: `{match_str_list}`; unable to determine needed environment."
+            raise ValueError(err_msg)
     for match in matches:
         source_name = match[0]
         package_name = match[1]
         package_version = match[3]
         if source_name not in known_sources:
-            raise ValueError(f"Unknown source `{source_name}` used; can not determine dependencies")
+            err_msg = f"Unknown source `{source_name}` used; can not determine dependencies"
+            raise ValueError(err_msg)
         dependency_str = f"{package_name}{package_version}".strip()
         if dependency_str in approved_dependencies[source_name]:
             continue  # We've already accounted for this dependency
         if whitelist_mapping is not None:
             # We need to validate against whitelist!
             if source_name not in whitelist_mapping:
-                raise ValueError(f"Unapproved source `{source_name}` used; can not trust document")
+                err_msg = f"Unapproved source `{source_name}` used; can not trust document"
+                raise ValueError(err_msg)
             if package_name not in whitelist_mapping[source_name]:
-                raise ValueError(
-                    f"`{package_name}` from `{source_name}` is not a trusted package; can not trust document"
-                )
+                err_msg = f"`{package_name}` from `{source_name}` is not a trusted package; can not trust document"
+                raise ValueError(err_msg)
         approved_dependencies[source_name].append(dependency_str)
         version_str = match[2] if package_version != "" else ""
         complete_match = f"python:{source_name}<{package_name}{version_str}>@{match[4]}"

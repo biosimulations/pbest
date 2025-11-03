@@ -16,7 +16,8 @@ def _extract_pbif_from_zip(archive_path: str, output_dir: str) -> str:
             target_pbif = current_file  # Note: This scheme does not support multiple pbif!
             # TODO: Allow for multi-pbif files? May require omex enforcment...
     if target_pbif is None:
-        raise ValueError(f"Could not locate Process Bigraph Intermediate Format file within archive: {archive_path}")
+        err_msg = f"Could not locate Process Bigraph Intermediate Format file within archive: {archive_path}"
+        raise ValueError(err_msg)
     return target_pbif
 
 
@@ -31,4 +32,5 @@ def extract_archive_returning_pbif_path(archive_path: str, output_dir: str) -> s
     elif archive_path.endswith(".zip"):
         return _extract_pbif_from_zip(archive_path, output_dir)
     else:
-        raise Exception(f"Unsupported archive: {archive_path}")
+        err_msg = f"Unsupported archive: {archive_path}"
+        raise TypeError(err_msg)

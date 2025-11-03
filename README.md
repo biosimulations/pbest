@@ -8,7 +8,7 @@
 
 # BioSimulators Experiment Description Implementation Compiler
 
-BSedic is a BioSimulators project designed to allow users to transform their 
+BSedic is a BioSimulators project designed to allow users to transform their
 biological experiments written in Sed into Process-Bigraph simulations.
 
 - **Github repository**: <https://github.com/biosimulators/bsedic/>

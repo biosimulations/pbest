@@ -1,0 +1,40 @@
+import re
+import typing
+
+import pydantic
+
+_ID_TYPE: typing.TypeAlias = typing.Annotated[str, pydantic.Field(pattern=re.compile(r"^[_a-zA-Z]+\w*$"))]
+_SOURCE_TYPE: typing.TypeAlias = typing.Annotated[str, pydantic.Field(pattern=re.compile(r"^[_a-zA-Z]+[\w\-]*$"))]
+_TYPE_TYPE: typing.TypeAlias = typing.Annotated[str, pydantic.Field(pattern=re.compile(r"^[_a-zA-Z]+[\w\-]*$"))]
+
+
+class AbstractDefinition(pydantic.BaseModel):
+    id: _ID_TYPE
+    source: str
+
+
+# class AbstractHeader(pydantic.BaseModel):
+#     pass
+
+
+class AbstractNode(pydantic.BaseModel):
+    id: _ID_TYPE
+    definition: _ID_TYPE
+    inputs: set[_ID_TYPE]
+    outputs: set[_ID_TYPE]
+
+
+class AbstractWiring(pydantic.BaseModel):
+    id: _ID_TYPE
+    output: _ID_TYPE
+    input: _ID_TYPE
+    protocol: _TYPE_TYPE  # The type of the port
+
+
+class AbstractEntityList(pydantic.BaseModel):
+    # TODO: Determine if we need multiple models in one AEL
+
+    # header: AbstractHeader
+    definitions: dict[_ID_TYPE, _SOURCE_TYPE]
+    nodes: list[AbstractNode]
+    wirings: list[AbstractWiring]

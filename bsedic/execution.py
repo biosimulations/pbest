@@ -4,22 +4,23 @@ import shutil
 from spython.main.parse.parsers import DockerParser  # type: ignore[import-untyped]
 from spython.main.parse.writers import SingularityWriter  # type: ignore[import-untyped]
 
-from bsander.bsandr_utils.experiment_archive import extract_archive_returning_pbif_path
-from bsander.bsandr_utils.input_types import (
+from bsedic.pbic3g.containerization.container_constructor import (
+    formulate_dockerfile_for_necessary_env,
+)
+from bsedic.pbic3g.local_registry import load_local_modules
+from bsedic.utils.experiment_archive import extract_archive_returning_pbif_path
+from bsedic.utils.input_types import (
     ContainerizationEngine,
     ContainerizationFileRepr,
     ContainerizationTypes,
     ExperimentPrimaryDependencies,
     ProgramArguments,
 )
-from bsander.pbic3g.containerization.container_constructor import (
-    formulate_dockerfile_for_necessary_env,
-)
-from bsander.pbic3g.local_registry import load_local_modules
 
 
-def execute_bsander(
-    original_program_arguments: ProgramArguments,) -> tuple[ContainerizationFileRepr, ExperimentPrimaryDependencies]:
+def execute_bsedic(
+    original_program_arguments: ProgramArguments,
+) -> tuple[ContainerizationFileRepr, ExperimentPrimaryDependencies]:
     new_input_file_path: str
     input_is_archive = original_program_arguments.input_file_path.endswith(
         ".zip"

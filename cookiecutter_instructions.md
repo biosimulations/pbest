@@ -51,7 +51,7 @@ To enable the code coverage reports, see [here](https://fpgmaas.github.io/cookie
 
 - Create an API Token on [PyPI](https://pypi.org/).
 - Add the API Token to your projects secrets with the name `PYPI_TOKEN` by visiting [this page](https://github.com/biosimulators/bsedic/settings/secrets/actions/new).
-- Create a [new release](https://github.com/biosimulators/bsedic/releases/new) on Github.
+- Create a [new release](https://github.com/biosimulators/bsedic/releases/new) on GitHub.
 - Create a new tag in the form `*.*.*`.
 
 For more details, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/cicd/#how-to-trigger-a-release).

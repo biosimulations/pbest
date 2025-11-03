@@ -30,7 +30,8 @@ class ExperimentPrimaryDependencies(BaseModel):
     def from_compact_repr(representation: str) -> "ExperimentPrimaryDependencies":
         split_dep_type = representation.split(";")
         if len(split_dep_type) != 2:
-            raise ValueError(f"Invalid primary dependency representation: {representation}")
+            err_msg = f"Invalid primary dependency representation: {representation}"
+            raise ValueError(err_msg)
         pypi_dependencies = split_dep_type[0].split(",")
         conda_dependencies = split_dep_type[1].split(",")
         return ExperimentPrimaryDependencies(pypi_dependencies=pypi_dependencies, conda_dependencies=conda_dependencies)

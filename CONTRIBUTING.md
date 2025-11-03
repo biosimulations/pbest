@@ -5,16 +5,16 @@ Every little bit helps, and here's what you need to know:
 
 ## Contribution Agreement
 Review the [Contributor License Agreement](CLA.md) (CLA). Whenever
-you submit a contribution to BSander, you are agreeing to the
+you submit a contribution to bsedic, you are agreeing to the
 CLA, which grants us rights to use your contribution. You don't need
 to do anything special to "sign" the CLA. Instead, opening a pull
 request indicates your agreement to the CLA.
 
 ## Code of Conduct
-We expect kindness and respect in all interactions with the 
-BioSimulators community. Harassing or insulting behavior is 
-not welcome and will result in enforcement actions. 
-Please review our [code of conduct](CODE_OF_CONDUCT.md), which describes 
+We expect kindness and respect in all interactions with the
+BioSimulators community. Harassing or insulting behavior is
+not welcome and will result in enforcement actions.
+Please review our [code of conduct](CODE_OF_CONDUCT.md), which describes
 our expectations and enforcement actions in more detail.
 
 ## Contacting Us
