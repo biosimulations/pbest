@@ -8,7 +8,7 @@ _SOURCE_TYPE: typing.TypeAlias = typing.Annotated[str, pydantic.Field(pattern=re
 _TYPE_TYPE: typing.TypeAlias = typing.Annotated[str, pydantic.Field(pattern=re.compile(r"^[_a-zA-Z]+[\w\-]*$"))]
 
 
-class AbstractDefinition(pydantic.BaseModel):
+class ExperimentDefinition(pydantic.BaseModel):
     id: _ID_TYPE
     source: str
 
@@ -17,24 +17,24 @@ class AbstractDefinition(pydantic.BaseModel):
 #     pass
 
 
-class AbstractNode(pydantic.BaseModel):
+class ExperimentNode(pydantic.BaseModel):
     id: _ID_TYPE
     definition: _ID_TYPE
     inputs: set[_ID_TYPE]
     outputs: set[_ID_TYPE]
 
 
-class AbstractWiring(pydantic.BaseModel):
+class ExperimentWiring(pydantic.BaseModel):
     id: _ID_TYPE
     output: _ID_TYPE
     input: _ID_TYPE
     protocol: _TYPE_TYPE  # The type of the port
 
 
-class AbstractEntityList(pydantic.BaseModel):
+class ExperimentEntityList(pydantic.BaseModel):
     # TODO: Determine if we need multiple models in one AEL
 
     # header: AbstractHeader
     definitions: dict[_ID_TYPE, _SOURCE_TYPE]
-    nodes: list[AbstractNode]
-    wirings: list[AbstractWiring]
+    nodes: list[ExperimentNode]
+    wirings: list[ExperimentWiring]
