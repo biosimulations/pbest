@@ -1,7 +1,6 @@
 from typing import Any
 
 import numpy as np
-import polars
 from process_bigraph import Step
 
 from bsedic.pbif.tools.stats import mean_squared_error_dict
@@ -9,17 +8,17 @@ from bsedic.pbif.tools.stats import mean_squared_error_dict
 
 class ComparisonTool(Step):
     config_schema = {
-        'ignore_nans': "boolean",
-        'columns_of_interest': "list[string]",
+        "ignore_nans": "boolean",
+        "columns_of_interest": "list[string]",
     }
+
     def inputs(self):
         return {
-            'results': 'numeric_results',
+            "results": "numeric_results",
         }
+
     def outputs(self):
-        return {
-            "comparison_result": "map[map[map[float]]]"
-        }
+        return {"comparison_result": "map[map[map[float]]]"}
 
 
 # class SubtractComparison(ComparisonTool):
@@ -34,10 +33,7 @@ class MSEComparison(ComparisonTool):
     def update(self, state: dict[str, Any], interval=None) -> dict[str, Any]:
         results_map = state.get("results", {})
         if not isinstance(results_map, dict) or len(results_map) < 2:
-            raise ValueError(
-                "CompareResults.update expects inputs['results'] "
-                "to be a dict with at least two entries."
-            )
+            raise ValueError("CompareResults.update expects inputs['results'] to be a dict with at least two entries.")
         engine_ids = list(results_map.keys())
 
         # Extract species time-series per engine
@@ -51,9 +47,7 @@ class MSEComparison(ComparisonTool):
             engine_to_species[eid] = column_to_row
 
         # Initialize symmetric MSE matrix
-        species_mse = {
-            i: {j: None for j in engine_ids} for i in engine_ids
-        }
+        species_mse = {i: dict.fromkeys(engine_ids) for i in engine_ids}
 
         # Matrix of each tool subtracted from the other
         # Pairwise MSE computation
@@ -72,8 +66,4 @@ class MSEComparison(ComparisonTool):
                 species_mse[i_name][j_name] = mse
                 species_mse[j_name][i_name] = mse
 
-        return {
-            "comparison": {
-                "species_mse": species_mse
-            }
-        }
+        return {"comparison": {"species_mse": species_mse}}

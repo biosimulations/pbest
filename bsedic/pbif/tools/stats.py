@@ -2,8 +2,7 @@ import numpy as np
 from process_bigraph import Step
 
 
-def mean_squared_error_dict(a: dict[str, list[float]],
-                            b: dict[str, list[float]]) -> float:
+def mean_squared_error_dict(a: dict[str, list[float]], b: dict[str, list[float]]) -> float:
     sum_sq = 0.0
     count = 0
 
@@ -26,6 +25,7 @@ def mean_squared_error_dict(a: dict[str, list[float]],
 
     return sum_sq / count
 
+
 def independent_mean_squared_error(a: list[float], b: list[float]) -> float:
     sum_sq = 0.0
     count = 0
@@ -40,28 +40,26 @@ def independent_mean_squared_error(a: list[float], b: list[float]) -> float:
 
 class StatsTool(Step):
     config_schema = {
-        'ignore_nans': "boolean",
+        "ignore_nans": "boolean",
     }
 
     def inputs(self):
         return {
-            "compute_store" : "array",
+            "compute_store": "array",
         }
 
     def outputs(self):
-        return {
-            "stats_result": "array"
-        }
+        return {"stats_result": "array"}
 
 
 class SumOfSquaresTool(StatsTool):
     def update(self, state, interval=None):
-        compute_store = np.array(state['compute_store'])
+        compute_store = np.array(state["compute_store"])
         row, col = compute_store.shape
         result = np.empty((row, col))
         means = compute_store.mean(axis=0)
         for r in range(row):
             for c in range(col):
-                res = (compute_store[r, c] - means[c])**2
+                res = (compute_store[r, c] - means[c]) ** 2
                 result[r, c] = res
         return {"stats_result": result.tolist()}
