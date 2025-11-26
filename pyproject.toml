@@ -131,4 +131,5 @@ branch = true
 source = ["bsedic"]
 
 [tool.uv.sources]
-biocompose =  { path = "../biocompose", editable = true }
+biocompose = { git = "https://github.com/vivarium-collective/biocompose", rev = "numerical-types" }
+# biocompose =  { path = "../biocompose", editable = true }

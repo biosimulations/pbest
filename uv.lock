@@ -152,7 +152,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/56/56/95694fc762aa8e5f7
 [[package]]
 name = "biocompose"
 version = "0.0.2"
-source = { editable = "../biocompose" }
+source = { git = "https://github.com/vivarium-collective/biocompose?rev=numerical-types#88b4c4f65e8c9981c5d5a8a0b7532426d9145d6e" }
 dependencies = [
     { name = "bigraph-schema" },
     { name = "bigraph-viz" },
@@ -163,21 +163,6 @@ dependencies = [
     { name = "rest-process" },
     { name = "tellurium" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "bigraph-schema" },
-    { name = "bigraph-viz" },
-    { name = "build", marker = "extra == 'dev'" },
-    { name = "copasi-basico" },
-    { name = "matplotlib" },
-    { name = "process-bigraph" },
-    { name = "pytest" },
-    { name = "pytest", marker = "extra == 'dev'" },
-    { name = "rest-process" },
-    { name = "tellurium" },
-]
-provides-extras = ["dev"]
 
 [[package]]
 name = "bsedic"
@@ -216,7 +201,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "biocompose", editable = "../biocompose" },
+    { name = "biocompose", git = "https://github.com/vivarium-collective/biocompose?rev=numerical-types" },
     { name = "deptry", specifier = ">=0.23.0" },
     { name = "mkdocs", specifier = ">=1.4.2" },
     { name = "mkdocs-material", specifier = ">=8.5.10" },
