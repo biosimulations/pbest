@@ -1,7 +1,7 @@
 import os
 import random
 
-from process_bigraph import generate_core, Composite
+from process_bigraph import Composite, generate_core
 
 from bsedic.pbif.tools.builder import CompositeBuilder
 
@@ -17,40 +17,41 @@ def test_parameter_scan_composite_generation():
     builder.add_parameter_scan(
         step_name=step_name,
         step_config={
-            "model_source": 'any_path',
+            "model_source": "any_path",
             "time": 10,
             "n_points": 10,
         },
-        config_values={
-            'time': times
-        },
+        config_values={"time": times},
         state_values={
-            'species_concentrations': {'PX': px, 'PY': py, 'PZ': pz},
+            "species_concentrations": {"PX": px, "PY": py, "PZ": pz},
         },
-        input_mappings={"concentrations": ["species_concentrations"], "counts": ["species_counts"]}
+        input_mappings={"concentrations": ["species_concentrations"], "counts": ["species_counts"]},
     )
     unique_input = set()
     combination_len = 3 * 3 * 3 * 3
     assert len(builder.state.keys()) == combination_len
 
     # Take generated composite, and ensure every combination is unique
-    for k in builder.state.keys():
-        values_in_step = (f"PX{builder.state[k]['species_concentrations']['PX']}:"
-                          f"PY{builder.state[k]['species_concentrations']['PY']}:"
-                          f"PZ{builder.state[k]['species_concentrations']['PZ']}:"
-                          f"Time{builder.state[k][step_name]['config']['time']}")
+    for k in builder.state:
+        values_in_step = (
+            f"PX{builder.state[k]['species_concentrations']['PX']}:"
+            f"PY{builder.state[k]['species_concentrations']['PY']}:"
+            f"PZ{builder.state[k]['species_concentrations']['PZ']}:"
+            f"Time{builder.state[k][step_name]['config']['time']}"
+        )
         assert values_in_step not in unique_input
         unique_input.add(values_in_step)
     assert len(unique_input) == combination_len
 
     # Ensure expected combination is in set
-    assert 'PX2:PY3:PZ8:Time1' in unique_input
-    for k in range(10):
-        assert (f'PX{random.sample(px, k=1)[0]}:'
-                f'PY{random.sample(py, k=1)[0]}:'
-                f'PZ{random.sample(pz, k=1)[0]}:'
-                f'Time{random.sample(times, k=1)[0]}'
-                in unique_input)
+    assert "PX2:PY3:PZ8:Time1" in unique_input
+    for _k in range(10):
+        assert (
+            f"PX{random.sample(px, k=1)[0]}:"
+            f"PY{random.sample(py, k=1)[0]}:"
+            f"PZ{random.sample(pz, k=1)[0]}:"
+            f"Time{random.sample(times, k=1)[0]}" in unique_input
+        )
 
 
 def test_parameter_scan():
@@ -62,33 +63,31 @@ def test_parameter_scan():
     pz = [7, 9, 10]
     times = [1, 10]
     builder.add_parameter_scan(
-        step_name='biocompose.processes.tellurium_process.TelluriumUTCStep',
+        step_name="biocompose.processes.tellurium_process.TelluriumUTCStep",
         step_config={
             "model_source": model_path,
             "time": 10,
             "n_points": 10,
         },
-        config_values={
-            'time': times
-        },
+        config_values={"time": times},
         state_values={
-            'species_concentrations': {'PX': px, 'PY': py, 'PZ': pz},
+            "species_concentrations": {"PX": px, "PY": py, "PZ": pz},
         },
-        input_mappings={"concentrations": ["species_concentrations"], "counts": ["species_counts"]}
+        input_mappings={"concentrations": ["species_concentrations"], "counts": ["species_counts"]},
     )
     param_composite = builder.build()
     step_name = "biocompose.processes.tellurium_process.TelluriumUTCStep"
-    result_set = list(param_composite.state[k] for k in param_composite.state.keys() if 'TelluriumUTCStep' in k)
+    result_set = [param_composite.state[k] for k in param_composite.state if "TelluriumUTCStep" in k]
     for px_i in px:
         for py_i in py:
             for pz_i in pz:
                 for time_i in times:
                     state = {
-                        "species_concentrations": {'PX': px_i, 'PY': py_i, 'PZ': pz_i},
+                        "species_concentrations": {"PX": px_i, "PY": py_i, "PZ": pz_i},
                         "species_counts": {},
                         "tellurium_step": {
                             "_type": "step",
-                            "address": f'local:{step_name}',
+                            "address": f"local:{step_name}",
                             "config": {
                                 "model_source": model_path,
                                 "time": time_i,
@@ -100,22 +99,22 @@ def test_parameter_scan():
                             },
                         },
                     }
-                    cur_comp = Composite(config={'state': state}, core=core)
-                    res = cur_comp.state['results']['tellurium']
+                    cur_comp = Composite(config={"state": state}, core=core)
+                    res = cur_comp.state["results"]["tellurium"]
 
                     # Ensure there is still something to check
                     assert len(result_set) > 0
 
                     for param in result_set:
-                        check = (param['species_concentrations']['PX'] == px_i
-                                 and param['species_concentrations']['PY'] == py_i
-                                 and param['species_concentrations']['PZ'] == pz_i
-                                 and param[step_name]['config']['time'] == time_i)
+                        check = (
+                            param["species_concentrations"]["PX"] == px_i
+                            and param["species_concentrations"]["PY"] == py_i
+                            and param["species_concentrations"]["PZ"] == pz_i
+                            and param[step_name]["config"]["time"] == time_i
+                        )
                         if check:
-                            assert res == param['results']
+                            assert res == param["results"]
                             result_set.remove(param)
 
     # Checked every combination
     assert len(result_set) == 0
-
-

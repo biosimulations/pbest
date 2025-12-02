@@ -7,8 +7,6 @@ from process_bigraph import Step
 
 from bsedic.pbif.tools.stats import mean_squared_error_dict
 
-# ruff: noqa: TRY003
-
 
 class ComparisonTool(Step):
     config_schema: typing.ClassVar[dict[str, str]] = {
@@ -37,7 +35,8 @@ class MSEComparison(ComparisonTool):
     def update(self, state: dict[str, Any], interval: Any = None) -> dict[str, Any]:
         results_map = state.get("results", {})
         if not isinstance(results_map, dict) or len(results_map) < 2:
-            raise ValueError("CompareResults.update expects inputs['results'] to be a dict with at least two entries.")
+            err_msg = "CompareResults.update expects inputs['results'] to be a dict with at least two entries."
+            raise ValueError(err_msg)
         engine_ids = list(results_map.keys())
 
         # Extract species time-series per engine

@@ -6,8 +6,6 @@ from bsedic.sed.data_structure import ExperimentNode, ExperimentNodeImplementati
 # With all of the groups gathered covering all abstract concept, in each group pick one implementation based on
 # criteria that can be feed in (pick from the set).
 
-# ruff: noqa: TRY003
-
 
 class AbstractRouter(ABC):
     @abstractmethod
