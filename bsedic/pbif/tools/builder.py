@@ -75,9 +75,9 @@ class CompositeBuilder:
 
     def add_parameter_scan(self, step_name: str,
                            step_config: dict[Any, Any],
-                           config_values: dict[str, Any],
-                           state_values: dict[str, Any],
-                           input_mappings: dict[str, list[str]]) -> None:
+                           input_mappings: dict[str, list[str]],
+                           config_values: dict[str, Any]={},
+                           state_values: dict[str, Any]={}) -> None:
         parameter_values: list[CompositeBuilder._PathNavigation] = \
             (self._deconstruct_dictionary([], state_values, CompositeBuilder.CompositeType.STATE)
              + self._deconstruct_dictionary([], config_values, CompositeBuilder.CompositeType.CONFIG))
@@ -122,7 +122,7 @@ class CompositeBuilder:
 
 
     def build(self) -> Composite:
-        comp = Composite(self.state, core=self.core)
+        comp = Composite({'state': self.state}, core=self.core)
         return comp
 
 
