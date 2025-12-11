@@ -35,7 +35,7 @@ class CompositeBuilder:
     def __init__(self, core: ProcessTypes):
         self.core: ProcessTypes = core
         self.step_number: int = 0
-        self.state: dict[Any, Any] = {}
+        self.state: dict[str, Any] = {}
 
     def _allocate_step_key(self, step_name: str) -> str:
         step_key = f"{step_name}_{self.step_number}"
@@ -88,7 +88,7 @@ class CompositeBuilder:
 
     def add_parameter_scan(
         self,
-        step_name: str,
+        step_address: str,
         step_config: dict[Any, Any],
         input_mappings: dict[str, list[str]],
         config_values: Optional[dict[str, Any]] = None,
@@ -129,7 +129,7 @@ class CompositeBuilder:
                 if len(all_paths) > 1:
                     combinatorics(current_step, all_paths[:-1])
                 else:
-                    step_key = self._allocate_step_key(step_name)
+                    step_key = self._allocate_step_key(step_address.split(":")[1])
                     current_step["step"]["outputs"]["result"] = ["results", step_key]
                     for k in current_step["step"]["inputs"]:
                         current_step["step"]["inputs"][k] = ["inputs", step_key]
@@ -141,7 +141,7 @@ class CompositeBuilder:
                 "state": {},
                 "step": {
                     "_type": "step",
-                    "address": f"local:{step_name}",
+                    "address": step_address,
                     "config": step_config,
                     "inputs": input_mappings,
                     "outputs": {"result": {}},

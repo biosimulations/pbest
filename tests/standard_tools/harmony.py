@@ -41,7 +41,7 @@ def test_comparison_example(fully_registered_builder: CompositeBuilder):
 def test_parameter_scan(fully_registered_builder: CompositeBuilder):
     model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
     fully_registered_builder.add_parameter_scan(
-        step_name="biocompose.processes.tellurium_process.TelluriumSteadyStateStep",
+        step_address="local:biocompose.processes.tellurium_process.TelluriumSteadyStateStep",
         step_config={"model_source": model_path},
         input_mappings={"species_concentrations": ["species_concentrations"], "counts": ["species_counts"]},
         config_values={},
