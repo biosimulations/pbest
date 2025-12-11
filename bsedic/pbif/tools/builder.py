@@ -64,7 +64,7 @@ class CompositeBuilder:
                 "results": store_with_values,
             },
             "outputs": {
-                "comparison": ["comparison_result", comparison_name],
+                "comparison_result": ["comparison_result", comparison_name],
             },
         }
 

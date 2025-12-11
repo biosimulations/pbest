@@ -21,6 +21,7 @@ dependencies = [
     # "pandas>=2.3.3",
     # "polars>=1.35.2",
     "process-bigraph>=0.0.51",
+    "bigraph-schema>=0.0.77",
     "pydantic>=2.12.3",
     # "python-libsbml>=5.20.5",
     "spython>=0.3.14",

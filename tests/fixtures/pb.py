@@ -13,6 +13,8 @@ from bsedic.pbif.tools.comparison import MSEComparison
 @pytest.fixture(scope="function")
 def fully_registered_builder() -> CompositeBuilder:
     core = generate_core()
+    for k, i in standard_types.items():
+        core.register(k, i)
     return CompositeBuilder(core=core)
 
 
