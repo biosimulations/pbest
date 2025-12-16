@@ -4,10 +4,6 @@
       "model1": {
         "location": "path/to/my/model.xml",
         "language": "urn:sedml:language:sbml"
-      },
-      "model2": {
-        "location": "path/to/my/model.xml",
-        "language": "urn:sedml:language:sbml"
       }
     },
     "data": {
@@ -18,101 +14,107 @@
     }
   },
 
-  "tasks": {
+  "processes": {
     "sim1": {
-      "_type": "timeCourse",
+      "_type": "uniformTimeCourse",
       "model": "model1",
       "initialTime": 0,
       "outputStartTime": 0,
       "outputEndTime": 500,
       "numberOfSteps": 1000,
-      "outputSelections": ["time", "S1", "S2", "compartment"]
+      "outputVariables": ["time", "S1", "S2", "compartment"]
     },
     "sim2": {
-      "_type": "timeCourse",
+      "_type": "uniformTimeCourse",
       "model": "model1",
       "initialTime": 0,
       "outputStartTime": 0,
       "outputEndTime": 500,
       "numberOfSteps": 1000,
-      "outputSelections": ["time", "S1", "S2", "compartment"]
+      "outputVariables": ["time", "S1", "S2", "compartment"]
     },
-    "compare": {
+    "sim1_sim2_compare": {
       "_type": "calculation",
-      "math": "(tasks:sim1 - tasks:sim2)^2"
+      "math": "(processes:sim1 - processes:sim2)^2"
+    },
+    "sim1_exp_compare": {
+      "_type": "calculation",
+      "math": "(processes:sim1 - data:experiment1)^2"
+    },
+    "sim2_exp_compare": {
+      "_type": "calculation",
+      "math": "(processes:sim2 - data:experiment1)^2"
     },
     "compare_summary": {
       "_type": "calculation",
-      "math": "sum(tasks:compare)"
+      "math": "[sum(processes:sim1_sim2_compare), sum(processes:sim1_exp_compare), sum(processes:sim2_exp_compare)]"
     }
   },
 
   "outputs": {
     "reports": {
       "sim1Report": {
-        "outputs": "tasks:sim1",
+        "outputs": "processes:sim1",
         "filename": "sim1.csv",
-        "file_format": "CSV"
+        "file_format": "http://purl.org/NET/mediatypes/text/csv"
       },
       "sim2Report": {
-        "outputs": "tasks:sim2",
+        "outputs": "processes:sim2",
         "filename": "sim2.csv",
-        "file_format": "CSV"
+        "file_format": "http://purl.org/NET/mediatypes/text/csv"
       },
       "comparisonReport": {
-        "outputs": "tasks:compare",
+        "outputs": "processes:compare",
         "filename": "all_sums_of_squares.csv",
-        "file_format": "CSV"
+        "file_format": "http://purl.org/NET/mediatypes/text/csv"
       },
       "comparisonSummary": {
-        "outputs": "tasks:compare_summary"
+        "outputs": "processes:compare_summary"
       }
     },
     "plots": {
-      "styles": {
-        "points_only": {
-          "line": false,
-          "markers": true
-        }
-      },
-      "figures": {
-        "Fig1": {
-         "label": "Figure 1",
-          "xAxis": {
-            "label": "Time"
+      "Fig1": {
+        "label": "Figure 1",
+        "xAxis": {
+          "label": "Time"
+        },
+        "yAxis": {
+          "label": "Concentrations"
+        },
+        "curves": {
+          "Sim1_S1": {
+            "x": "processes:sim1:time",
+            "y": "processes:sim1:S1"
           },
-          "yAxis": {
-            "label": "Concentrations"
+          "Sim1_S2": {
+            "x": "processes:sim1:time",
+            "y": "processes:sim1:S2"
           },
-          "curves": {
-            "Sim1_S1": {
-              "x": "tasks:sim1:time",
-              "y": "tasks:sim1:S1"
-            },
-            "Sim1_S2": {
-              "x": "tasks:sim1:time",
-              "y": "tasks:sim1:S2"
-            },
-            "Sim2_S1": {
-              "x": "tasks:sim1:time",
-              "y": "tasks:sim2:S1"
-            },
-            "Sim2_S2": {
-              "x": "tasks:sim1:time",
-              "y": "tasks:sim2:S2"
-            },
-            "S1_data": {
-              "x": "experiment1:time",
-              "y": "experiment1:S1",
-              "style": "points_only"
-            },
-            "S2_data": {
-              "x": "experiment1:time",
-              "y": "experiment1:S2",
-              "style": "points_only"
-            }
+          "Sim2_S1": {
+            "x": "processes:sim1:time",
+            "y": "processes:sim2:S1"
+          },
+          "Sim2_S2": {
+            "x": "processes:sim1:time",
+            "y": "processes:sim2:S2"
+          },
+          "S1_data": {
+            "x": "experiment1:time",
+            "y": "experiment1:S1",
+            "style": "points_only"
+          },
+          "S2_data": {
+            "x": "experiment1:time",
+            "y": "experiment1:S2",
+            "style": "points_only"
           }
         }
+      }
+    },
+    "styles": {
+      "points_only": {
+        "line": false,
+        "markers": true
       }
     }
   }
