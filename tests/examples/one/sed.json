@@ -54,6 +54,12 @@
     "compare_summary": {
       "_type": "calculation",
       "math": "[sum(processes:sim1_sim2_compare), sum(processes:sim1_exp_compare), sum(processes:sim2_exp_compare)]"
+    },
+    "simcompare_v2": {
+      "_type": "sumOfSquares",
+      "inputs": ["proceses:sim1",
+                 "processes:sim2",
+                 "data:experiment1"]
     }
   },
 
