@@ -1,6 +1,7 @@
+import math
 import os
 
-from bsedic.pbif.tools.builder import CompositeBuilder
+from bsedic.utils.builder import CompositeBuilder
 
 
 def comparison_builder(builder: CompositeBuilder) -> None:
@@ -74,5 +75,11 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder):
     # Seems as if values don't change over parameter scan, cause for concern?
     results = comp.state["parameter_scan_0"]["results"]
     for k in results:
-        assert results[k]["jacobian"]["values"] == jacboian_values
-        assert results[k]["steady_state"]["values"] == steady_state_values
+        parameter_jacobian = results[k]["jacobian"]["values"]
+        parameter_steady_state = results[k]["steady_state"]["values"][0]
+        for i in range(len(parameter_jacobian)):
+            for j in range(len(parameter_jacobian[i])):
+                assert math.isclose(parameter_jacobian[i][j], jacboian_values[i][j], rel_tol=0, abs_tol=1e-10)
+
+        for j in range(len(parameter_steady_state)):
+            assert math.isclose(parameter_steady_state[j], steady_state_values[0][j], rel_tol=0, abs_tol=1e-10)

@@ -5,8 +5,8 @@ import pytest
 from process_bigraph import ProcessTypes, generate_core
 
 # from biocompose import standard_types
-from bsedic.pbif.tools import standard_types
-from bsedic.pbif.tools.builder import CompositeBuilder
+from bsedic import standard_types
+from bsedic.utils.builder import CompositeBuilder
 
 
 @pytest.fixture(scope="function")
@@ -58,7 +58,7 @@ def comparison_document() -> dict[Any, Any]:
         },
         "comparison": {
             "_type": "step",
-            "address": "local:bsedic.pbif.tools.comparison.MSEComparison",
+            "address": "local:bsedic.registry.comparison.MSEComparison",
             "config": {},
             "inputs": {
                 "results": ["results"],

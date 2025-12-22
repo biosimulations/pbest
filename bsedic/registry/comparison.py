@@ -5,7 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 from process_bigraph import Step
 
-from bsedic.pbif.tools.stats import mean_squared_error_dict
+from bsedic.registry.stats import mean_squared_error_dict
 
 
 class ComparisonTool(Step):

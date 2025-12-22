@@ -1,13 +1,12 @@
 import tempfile
 
-from bsedic.pbif.containerization.container_constructor import (
-    ProgramArguments,
+from bsedic.containerization import (
     convert_dependencies_to_installation_string_representation,
     determine_dependencies,
     formulate_dockerfile_for_necessary_env,
     generate_necessary_values,
 )
-from bsedic.utils.input_types import ContainerizationEngine, ContainerizationTypes
+from bsedic.utils.input_types import ContainerizationEngine, ContainerizationTypes, ProgramArguments
 
 
 def test_generate_necessary_values() -> None:

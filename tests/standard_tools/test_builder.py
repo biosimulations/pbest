@@ -3,7 +3,7 @@ import random
 
 from process_bigraph import Composite, generate_core
 
-from bsedic.pbif.tools.builder import CompositeBuilder
+from bsedic.utils.builder import CompositeBuilder
 
 
 def test_parameter_scan_composite_generation():
