@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 
 from pydantic import BaseModel
 
@@ -62,10 +63,24 @@ class ExperimentPrimaryDependencies(BaseModel):
         return self.conda_dependencies
 
 
-@dataclass
-class ProgramArguments:
+@dataclass(frozen=True)
+class ContainerizationProgramArguments:
+    """
+    Create a container acting as an isolated environment for execution.
+    """
+
     input_file_path: str
-    output_dir: str | None
-    passlist_entries: list[str]
     containerization_type: ContainerizationTypes
     containerization_engine: ContainerizationEngine
+    working_directory: Path
+
+
+@dataclass
+class ExecutionProgramArguments:
+    """
+    Provide information required to execute a process bi-graph.
+    """
+
+    input_file_path: str
+    interval: float
+    output_directory: Path
