@@ -167,6 +167,7 @@ name = "bsedic"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
+    { name = "jinja2" },
     { name = "numpy" },
     { name = "process-bigraph" },
     { name = "pydantic" },
@@ -191,6 +192,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "numpy", specifier = ">=2.3.4" },
     { name = "process-bigraph", specifier = ">=0.0.51" },
     { name = "pydantic", specifier = ">=2.12.3" },
