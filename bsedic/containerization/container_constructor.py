@@ -1,65 +1,50 @@
+import os
 import re
+import shutil
 from typing import Optional
 
-from bsedic.containerization.container_file import (
-    get_generic_dockerfile_template,
-    pull_substitution_keys_from_document,
-)
+from jinja2 import Template
+from spython.main.parse.parsers import DockerParser  # type: ignore[import-untyped]
+from spython.main.parse.writers import SingularityWriter  # type: ignore[import-untyped]
+
+from bsedic.utils.experiment_archive import extract_archive_returning_pbif_path
 from bsedic.utils.input_types import (
+    ContainerizationEngine,
     ContainerizationFileRepr,
+    ContainerizationProgramArguments,
+    ContainerizationTypes,
     ExperimentPrimaryDependencies,
-    ProgramArguments,
 )
 
 
 def formulate_dockerfile_for_necessary_env(
-    program_arguments: ProgramArguments,
+    program_arguments: ContainerizationProgramArguments, experiment_deps: ExperimentPrimaryDependencies
 ) -> tuple[ContainerizationFileRepr, ExperimentPrimaryDependencies]:
-    docker_template: str = get_generic_dockerfile_template()
-    pb_document_str: str
-    with open(program_arguments.input_file_path) as pb_document_file:
-        pb_document_str = pb_document_file.read()
-    experiment_deps, updated_document_str = determine_dependencies(pb_document_str, program_arguments.passlist_entries)
-    if updated_document_str != pb_document_str:  # we need to update file
-        with open(program_arguments.input_file_path, "w") as pb_document_file:
-            pb_document_file.write(updated_document_str)
-    for desired_field in generate_necessary_values():
-        match_target: str = "$${#" + desired_field + "}"
-        if desired_field == "PYPI_DEPENDENCIES":
-            if len(experiment_deps.get_pypi_dependencies()) == 0:
-                docker_template = docker_template.replace(match_target, "# No PyPI dependencies!")
-                continue
-            pypi_section = """
-RUN python3 -m pip install $${#DEPENDENCIES}
-""".strip()
-            dependency_str = convert_dependencies_to_installation_string_representation(
-                experiment_deps.get_pypi_dependencies()
-            )
-            filled_section = pypi_section.replace("$${#DEPENDENCIES}", dependency_str)
-            docker_template = docker_template.replace(match_target, filled_section)
-        elif desired_field == "CONDA_FORGE_DEPENDENCIES":
-            if len(experiment_deps.get_conda_dependencies()) == 0:
-                docker_template = docker_template.replace(match_target, "# No conda dependencies!")
-                continue
-            conda_section = """
-RUN mkdir /micromamba
-RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
-RUN mv bin/micromamba /usr/local/bin/
-RUN micromamba create -y -p /opt/conda -c conda-forge $${#DEPENDENCIES} python=3.12
-ENV PATH=/opt/conda/bin:$PATH
-""".strip()
-            dependency_str = " ".join(experiment_deps.get_conda_dependencies())
-            filled_section = conda_section.replace("$${#DEPENDENCIES}", dependency_str)
-            docker_template = docker_template.replace(match_target, filled_section)
+    # pb_document_str: str
+    deps_install_command: str = ""
+    # with open(program_arguments.input_file_path) as pb_document_file:
+    #     pb_document_str = pb_document_file.read()
+    # experiment_deps, updated_document_str = determine_dependencies(pb_document_str, program_arguments.passlist_entries)
+
+    pypi_deps = experiment_deps.get_pypi_dependencies()
+    for p in range(len(pypi_deps)):
+        if p == 0:
+            deps_install_command += f"RUN python3 -m pip install '{pypi_deps[p]}'"
+        elif p != len(pypi_deps) - 1:
+            deps_install_command += f" '{pypi_deps[p]}'"
         else:
-            err_msg = f"unknown field in template dockerfile: {desired_field}"
-            raise ValueError(err_msg)
+            deps_install_command += f" '{pypi_deps[p]}'\n"
+    for c in experiment_deps.get_conda_dependencies():
+        deps_install_command += f"RUN micromamba update -c conda-forge -p /micromamba_env/runtime_env {c} python=3.12\n"
 
-    return ContainerizationFileRepr(representation=docker_template), experiment_deps
+    with open(__file__.rsplit(os.sep, maxsplit=1)[0] + f"{os.sep}generic_container.jinja") as f:
+        template = Template(f.read())
+        templated_container = template.render(
+            additional_execution_tools=experiment_deps.manager_installation_string(),
+            dependencies_to_install=deps_install_command,
+        )
 
-
-def generate_necessary_values() -> list[str]:
-    return pull_substitution_keys_from_document()
+    return ContainerizationFileRepr(representation=templated_container), experiment_deps
 
 
 # Due to an assumption that we can not have all dependencies included
@@ -134,3 +119,87 @@ def determine_dependencies(  # noqa: C901
 
 def convert_dependencies_to_installation_string_representation(dependencies: list[str]) -> str:
     return "'" + "' '".join(dependencies) + "'"
+
+
+def generate_container_def_file(
+    original_program_arguments: ContainerizationProgramArguments,
+) -> tuple[ContainerizationFileRepr, ExperimentPrimaryDependencies]:
+    new_input_file_path: str
+    input_is_archive = original_program_arguments.input_file_path.endswith(
+        ".zip"
+    ) or original_program_arguments.input_file_path.endswith(".omex")
+    if input_is_archive:
+        new_input_file_path = extract_archive_returning_pbif_path(
+            original_program_arguments.input_file_path, str(original_program_arguments.working_directory)
+        )
+    else:
+        new_input_file_path = os.path.join(
+            str(original_program_arguments.working_directory),
+            os.path.basename(original_program_arguments.input_file_path),
+        )
+        print(f"file copied to `{shutil.copy(original_program_arguments.input_file_path, new_input_file_path)}`")
+    required_program_arguments = ContainerizationProgramArguments(
+        input_file_path=new_input_file_path,
+        containerization_type=original_program_arguments.containerization_type,
+        containerization_engine=original_program_arguments.containerization_engine,
+        working_directory=original_program_arguments.working_directory,
+    )
+
+    # load_local_modules()  # Collect Abstracts
+    # TODO: Add feature - resolve abstracts
+
+    # Determine Dependencies
+    docker_template: ContainerizationFileRepr
+    returned_template: ContainerizationFileRepr
+    primary_dependencies: ExperimentPrimaryDependencies
+    docker_template, primary_dependencies = formulate_dockerfile_for_necessary_env(
+        required_program_arguments,
+        experiment_deps=ExperimentPrimaryDependencies(
+            [
+                "cobra",
+                "tellurium",
+                "numpy",
+                "matplotlib",
+                "scipy",
+            ],
+            ["readdy"],
+        ),
+    )
+    returned_template = docker_template
+    if required_program_arguments.containerization_type != ContainerizationTypes.NONE:
+        if required_program_arguments.containerization_type != ContainerizationTypes.SINGLE:
+            raise NotImplementedError("Only single containerization is currently supported")
+        container_file_path: str
+        container_file_path = os.path.join(str(original_program_arguments.working_directory), "Dockerfile")
+        with open(container_file_path, "w") as docker_file:
+            docker_file.write(docker_template.representation)
+        if (
+            required_program_arguments.containerization_engine == ContainerizationEngine.APPTAINER
+            or required_program_arguments.containerization_engine == ContainerizationEngine.BOTH
+        ):
+            dockerfile_path = container_file_path
+            container_file_path = os.path.join(str(original_program_arguments.working_directory), "singularity.def")
+            dockerfile_parser = DockerParser(dockerfile_path)
+            singularity_writer = SingularityWriter(dockerfile_parser.recipe)
+            results = singularity_writer.convert()
+            returned_template = ContainerizationFileRepr(representation=results)
+            with open(container_file_path, "w") as container_file:
+                container_file.write(results)
+            if required_program_arguments.containerization_engine != ContainerizationEngine.BOTH:
+                os.remove(dockerfile_path)
+        print(f"Container build file located at '{container_file_path}'")
+
+    # Reconstitute if archive
+    if input_is_archive:
+        base_name = os.path.basename(original_program_arguments.input_file_path)
+        output_dir: str = (
+            os.path.dirname(original_program_arguments.input_file_path)
+            if original_program_arguments.working_directory is None
+            else str(original_program_arguments.working_directory)
+        )
+        new_archive_path = os.path.join(output_dir, base_name)
+        # Note: If no output dir is provided (dir is `None`), then input file WILL BE OVERWRITTEN
+        target_dir = os.path.join(str(original_program_arguments.working_directory), base_name.split(".")[0])
+        shutil.make_archive(new_archive_path, "zip", target_dir)
+        shutil.move(new_archive_path + ".zip", new_archive_path)  # get rid of extra suffix
+    return returned_template, primary_dependencies

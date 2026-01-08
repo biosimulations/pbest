@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 
 from pydantic import BaseModel
 
@@ -52,6 +53,17 @@ class ExperimentPrimaryDependencies(BaseModel):
         conda_dependencies: str = "conda:" + ",conda:".join(self.conda_dependencies)
         return pypi_dependencies + "," + conda_dependencies
 
+    def manager_installation_string(self) -> str:
+        additional_execution_tools: str = ""
+        if len(self.get_conda_dependencies()) > 0:
+            additional_execution_tools += """WORKDIR /usr/local/bin
+RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba --strip-components=1
+WORKDIR /
+RUN mkdir /micromamba_env
+RUN micromamba create -p /micromamba_env/runtime_env python=3.12
+RUN eval "$(micromamba shell hook --shell posix)" && micromamba activate /micromamba_env/runtime_env"""
+        return additional_execution_tools
+
     def get_compact_repr(self) -> str:
         return self._compact_repr
 
@@ -62,10 +74,24 @@ class ExperimentPrimaryDependencies(BaseModel):
         return self.conda_dependencies
 
 
-@dataclass
-class ProgramArguments:
+@dataclass(frozen=True)
+class ContainerizationProgramArguments:
+    """
+    Create a container acting as an isolated environment for execution.
+    """
+
     input_file_path: str
-    output_dir: str | None
-    passlist_entries: list[str]
     containerization_type: ContainerizationTypes
     containerization_engine: ContainerizationEngine
+    working_directory: Path
+
+
+@dataclass
+class ExecutionProgramArguments:
+    """
+    Provide information required to execute a process bi-graph.
+    """
+
+    input_file_path: str
+    interval: float
+    output_directory: Path

@@ -1,11 +1,13 @@
 import json
 import os
 import tempfile
+from pathlib import Path
 from typing import Any
 
 from process_bigraph import Composite, ProcessTypes
 
-from bsedic.main import PBProgramArguments, run_experiment
+from bsedic.main import run_experiment
+from bsedic.utils.input_types import ExecutionProgramArguments
 
 
 # Write a pbg that is used for comparison between Copasi and Tellurium, run it, and then check results
@@ -15,8 +17,8 @@ def test_run_experiment(comparison_document: dict[Any, Any], fully_registered_co
         comp.save(filename="input.pbif", outdir=tmpdir)
 
         os.mkdir(f"{tmpdir}/output")
-        program_arguments = PBProgramArguments(
-            input_file=f"{tmpdir}/input.pbif", output_dir=f"{tmpdir}/output", verbose=True, interval=1
+        program_arguments = ExecutionProgramArguments(
+            input_file_path=f"{tmpdir}/input.pbif", output_directory=Path(f"{tmpdir}/output"), interval=1
         )
         run_experiment(program_arguments)
 

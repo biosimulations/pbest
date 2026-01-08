@@ -2,11 +2,15 @@ import argparse
 import os
 import sys
 
-from bsedic.containerization.execution import generate_container_def_file
-from bsedic.utils.input_types import ContainerizationEngine, ContainerizationTypes, ProgramArguments
+from bsedic.containerization.container_constructor import generate_container_def_file
+from bsedic.utils.input_types import (
+    ContainerizationEngine,
+    ContainerizationProgramArguments,
+    ContainerizationTypes,
+)
 
 
-def get_program_arguments() -> ProgramArguments:
+def get_program_arguments() -> ContainerizationProgramArguments:
     parser = _generate_argparse_parser()
     args = parser.parse_args()
     if args.target_containerization is not None and args.containerize is None:
@@ -47,19 +51,18 @@ def get_program_arguments() -> ProgramArguments:
             parser.print_help()
             print("`whitelist` must be a file that exists!", file=sys.stderr)
             sys.exit(13)
-        with args.whitelist.open() as f:
-            whitelist_contents = f.read().strip().split("\n")
-    else:
-        whitelist_contents = None
+        # with args.whitelist.open() as f:
+        #     whitelist_contents = f.read().strip().split("\n")
+    # else:
+    #     whitelist_contents = None
     containerization_type: ContainerizationTypes = ContainerizationTypes.NONE
     containerization_engine: ContainerizationEngine = ContainerizationEngine.NONE
     if args.containerize is not None:
         containerization_type, containerization_engine = _determine_containerization(args)
 
-    return ProgramArguments(
+    return ContainerizationProgramArguments(
         input_file_path=args.input_file_path,
-        output_dir=args.output_directory,
-        passlist_entries=whitelist_contents,
+        working_directory=args.output_directory,
         containerization_type=containerization_type,
         containerization_engine=containerization_engine,
     )

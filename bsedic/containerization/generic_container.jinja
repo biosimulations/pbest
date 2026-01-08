@@ -1,0 +1,19 @@
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm
+
+RUN apt update
+RUN apt upgrade -y
+RUN apt install -y git curl
+
+## Additional Execution tools (ex. Conda)
+{{ additional_execution_tools }}
+
+## Dependency Installs
+{{ dependencies_to_install }}
+
+## Execute
+RUN mkdir /runtime
+WORKDIR /runtime
+RUN git clone https://github.com/biosimulations/biosim-registry.git /runtime
+RUN python3 -m pip install -e /runtime
+
+ENTRYPOINT ["python3", "/runtime/bsedic/main.py"]
