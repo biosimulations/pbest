@@ -153,15 +153,17 @@ def generate_container_def_file(
     returned_template: ContainerizationFileRepr
     primary_dependencies: ExperimentPrimaryDependencies
     docker_template, primary_dependencies = formulate_dockerfile_for_necessary_env(
-        required_program_arguments, experiment_deps=ExperimentPrimaryDependencies([
-            "cobra",
-            "tellurium",
-            "numpy",
-            "matplotlib",
-            "scipy",
-        ], [
-            "readdy"
-        ])
+        required_program_arguments,
+        experiment_deps=ExperimentPrimaryDependencies(
+            [
+                "cobra",
+                "tellurium",
+                "numpy",
+                "matplotlib",
+                "scipy",
+            ],
+            ["readdy"],
+        ),
     )
     returned_template = docker_template
     if required_program_arguments.containerization_type != ContainerizationTypes.NONE:
