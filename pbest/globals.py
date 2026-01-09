@@ -1,6 +1,6 @@
 from process_bigraph import ProcessTypes, generate_core
 
-from bsedic import standard_types
+from pbest import standard_types
 
 loaded_core: ProcessTypes | None = None
 

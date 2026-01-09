@@ -3,14 +3,14 @@ import random
 
 from process_bigraph import Composite, generate_core
 
-from bsedic.globals import get_loaded_core
-from bsedic.utils.builder import CompositeBuilder
+from pbest.globals import get_loaded_core
+from pbest.utils.builder import CompositeBuilder
 
 
 def test_parameter_scan_composite_generation():
     core = generate_core()
     builder = CompositeBuilder(core=core)
-    step_name = "local:bsedic.registry.simulators.tellurium_process.TelluriumUTCStep"
+    step_name = "local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep"
     times = [1, 10, 100]
     px = [0, 1, 2]
     py = [3, 4, 5]
@@ -67,7 +67,7 @@ def test_parameter_scan():
     pz = [7, 9, 10]
     times = [1, 10]
     builder.add_parameter_scan(
-        step_address="local:bsedic.registry.simulators.tellurium_process.TelluriumUTCStep",
+        step_address="local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep",
         step_config={
             "model_source": model_path,
             "time": 10,
@@ -81,7 +81,7 @@ def test_parameter_scan():
     )
     param_composite = builder.build()
     param_state = param_composite.state["parameter_scan_0"]
-    step_name = "bsedic.registry.simulators.tellurium_process.TelluriumUTCStep"
+    step_name = "pbest.registry.simulators.tellurium_process.TelluriumUTCStep"
     result_set = [
         {"results": param_state["results"][k], "step": param_state[k], "inputs": param_state["inputs"][k]}
         for k in param_state

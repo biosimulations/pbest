@@ -114,67 +114,6 @@ wheels = [
 ]
 
 [[package]]
-name = "bsedic"
-version = "0.0.1"
-source = { editable = "." }
-dependencies = [
-    { name = "copasi-basico" },
-    { name = "jinja2" },
-    { name = "libroadrunner" },
-    { name = "numpy" },
-    { name = "pandas" },
-    { name = "process-bigraph" },
-    { name = "pydantic" },
-    { name = "python-copasi" },
-    { name = "spython" },
-    { name = "tellurium" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "deptry" },
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings", extra = ["python"] },
-    { name = "mypy" },
-    { name = "pandas-stubs" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "tox-uv" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "copasi-basico" },
-    { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "libroadrunner" },
-    { name = "numpy", specifier = ">=2.3.4" },
-    { name = "pandas", specifier = ">=2.3.3" },
-    { name = "process-bigraph", specifier = "==0.0.51" },
-    { name = "pydantic", specifier = ">=2.12.3" },
-    { name = "python-copasi" },
-    { name = "spython", specifier = ">=0.3.14" },
-    { name = "tellurium", specifier = ">=2.2.11.1" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "deptry", specifier = ">=0.23.0" },
-    { name = "mkdocs", specifier = ">=1.4.2" },
-    { name = "mkdocs-material", specifier = ">=8.5.10" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.26.1" },
-    { name = "mypy", specifier = ">=0.991" },
-    { name = "pandas-stubs" },
-    { name = "pre-commit", specifier = ">=2.20.0" },
-    { name = "pytest", specifier = ">=7.2.0" },
-    { name = "pytest-cov", specifier = ">=4.0.0" },
-    { name = "ruff", specifier = ">=0.11.5" },
-    { name = "tox-uv", specifier = ">=1.11.3" },
-]
-
-[[package]]
 name = "cachetools"
 version = "6.2.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1511,6 +1450,67 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/41/b9/6eb731b52f132181a9144bbe77ff82117f6b2d2fbfba49aaab2c014c4760/pathspec-1.0.2.tar.gz", hash = "sha256:fa32b1eb775ed9ba8d599b22c5f906dc098113989da2c00bf8b210078ca7fb92", size = 130502, upload-time = "2026-01-08T04:33:27.613Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/78/6b/14fc9049d78435fd29e82846c777bd7ed9c470013dc8d0260fff3ff1c11e/pathspec-1.0.2-py3-none-any.whl", hash = "sha256:62f8558917908d237d399b9b338ef455a814801a4688bc41074b25feefd93472", size = 54844, upload-time = "2026-01-08T04:33:26.4Z" },
+]
+
+[[package]]
+name = "pbest"
+version = "0.0.1"
+source = { editable = "." }
+dependencies = [
+    { name = "copasi-basico" },
+    { name = "jinja2" },
+    { name = "libroadrunner" },
+    { name = "numpy" },
+    { name = "pandas" },
+    { name = "process-bigraph" },
+    { name = "pydantic" },
+    { name = "python-copasi" },
+    { name = "spython" },
+    { name = "tellurium" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "deptry" },
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "mypy" },
+    { name = "pandas-stubs" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+    { name = "tox-uv" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "copasi-basico" },
+    { name = "jinja2", specifier = ">=3.1.6" },
+    { name = "libroadrunner" },
+    { name = "numpy", specifier = ">=2.3.4" },
+    { name = "pandas", specifier = ">=2.3.3" },
+    { name = "process-bigraph", specifier = "==0.0.51" },
+    { name = "pydantic", specifier = ">=2.12.3" },
+    { name = "python-copasi" },
+    { name = "spython", specifier = ">=0.3.14" },
+    { name = "tellurium", specifier = ">=2.2.11.1" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "deptry", specifier = ">=0.23.0" },
+    { name = "mkdocs", specifier = ">=1.4.2" },
+    { name = "mkdocs-material", specifier = ">=8.5.10" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.26.1" },
+    { name = "mypy", specifier = ">=0.991" },
+    { name = "pandas-stubs" },
+    { name = "pre-commit", specifier = ">=2.20.0" },
+    { name = "pytest", specifier = ">=7.2.0" },
+    { name = "pytest-cov", specifier = ">=4.0.0" },
+    { name = "ruff", specifier = ">=0.11.5" },
+    { name = "tox-uv", specifier = ">=1.11.3" },
 ]
 
 [[package]]

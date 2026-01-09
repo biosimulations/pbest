@@ -4,8 +4,8 @@
 #
 # import pytest
 #
-# from bsedic.containerization.container_constructor import generate_container_def_file as run_bsedic
-# from bsedic.utils.input_types import ContainerizationEngine, ContainerizationTypes, ExecutionProgramArguments
+# from pbest.containerization.container_constructor import generate_container_def_file as run_pbest
+# from pbest.utils.input_types import ContainerizationEngine, ContainerizationTypes, ExecutionProgramArguments
 #
 # fake_input_file = """
 # "python:pypi<numpy[>=2.0.0]>@numpy.random.rand"

@@ -16,4 +16,4 @@ WORKDIR /runtime
 RUN git clone https://github.com/biosimulations/biosim-registry.git /runtime
 RUN python3 -m pip install -e /runtime
 
-ENTRYPOINT ["python3", "/runtime/bsedic/main.py"]
+ENTRYPOINT ["python3", "/runtime/pbest/main.py"]

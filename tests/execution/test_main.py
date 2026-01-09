@@ -6,8 +6,8 @@ from typing import Any
 
 from process_bigraph import Composite, ProcessTypes
 
-from bsedic.main import run_experiment
-from bsedic.utils.input_types import ExecutionProgramArguments
+from pbest.main import run_experiment
+from pbest.utils.input_types import ExecutionProgramArguments
 
 
 # Write a pbg that is used for comparison between Copasi and Tellurium, run it, and then check results

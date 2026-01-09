@@ -1,5 +1,5 @@
-# Authors of BSedic:
+# Authors of pbest:
 
-The maintainers of the BSedic project are:
+The maintainers of the pbest project are:
 * Ezequiel Valencia (@Ezequiel-Valencia)
 * Logan C.W. Drescher (@CodeByDrescher)

@@ -7,8 +7,8 @@ from jinja2 import Template
 from spython.main.parse.parsers import DockerParser  # type: ignore[import-untyped]
 from spython.main.parse.writers import SingularityWriter  # type: ignore[import-untyped]
 
-from bsedic.utils.experiment_archive import extract_archive_returning_pbif_path
-from bsedic.utils.input_types import (
+from pbest.utils.experiment_archive import extract_archive_returning_pbif_path
+from pbest.utils.input_types import (
     ContainerizationEngine,
     ContainerizationFileRepr,
     ContainerizationProgramArguments,

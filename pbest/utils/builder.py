@@ -58,7 +58,7 @@ class CompositeBuilder:
         comparison_step_key = self._allocate_step_key("comparison_step")
         self.state[comparison_step_key] = {
             "_type": "step",
-            "address": "local:bsedic.registry.comparison.MSEComparison",
+            "address": "local:pbest.registry.comparison.MSEComparison",
             "config": {},
             "inputs": {
                 "results": store_with_values,

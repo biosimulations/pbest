@@ -11,7 +11,7 @@ from basico import (
 from pandas import DataFrame
 from process_bigraph import Process, ProcessTypes, Step
 
-from bsedic.registry.utils import model_path_resolution
+from pbest.registry.utils import model_path_resolution
 
 
 def _set_initial_concentrations(changes: Any, dm: Any) -> None:

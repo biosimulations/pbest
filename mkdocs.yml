@@ -1,6 +1,6 @@
-site_name: bsedic
-repo_url: https://github.com/biosimulators/bsedic
-site_url: https://biosimulators.github.io/bsedic
+site_name: pbest
+repo_url: https://github.com/biosimulations/biosim-registry
+site_url: https://github.com/biosimulations/biosim-registry
 site_description: This is a template repository for Python projects that use uv for their dependency management.
 site_author: Center for Reproducable Biological Modeling
 edit_uri: edit/main/docs/
@@ -15,7 +15,7 @@ plugins:
   - mkdocstrings:
       handlers:
         python:
-          paths: ["bsedic"]
+          paths: ["pbest"]
 theme:
   name: material
   feature:
@@ -41,9 +41,9 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/biosimulators/bsedic
+      link: https://github.com/biosimulations/biosim-registry
     - icon: fontawesome/brands/python
-      link: https://pypi.org/project/bsedic
+      link: https://pypi.org/project/pbest
 
 markdown_extensions:
   - toc:

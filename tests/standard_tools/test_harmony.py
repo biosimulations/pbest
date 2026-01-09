@@ -1,13 +1,13 @@
 import math
 import os
 
-from bsedic.utils.builder import CompositeBuilder
+from pbest.utils.builder import CompositeBuilder
 
 
 def comparison_builder(builder: CompositeBuilder) -> None:
     model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
     builder.add_step(
-        address="local:bsedic.registry.simulators.tellurium_process.TelluriumUTCStep",
+        address="local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep",
         config={
             "model_source": model_path,
             "time": 10,
@@ -17,7 +17,7 @@ def comparison_builder(builder: CompositeBuilder) -> None:
         outputs={"result": ["results", "tellurium"]},
     )
     builder.add_step(
-        address="local:bsedic.registry.simulators.copasi_process.CopasiUTCStep",
+        address="local:pbest.registry.simulators.copasi_process.CopasiUTCStep",
         config={
             "model_source": model_path,
             "time": 10,
@@ -45,7 +45,7 @@ def test_comparison_example(fully_registered_builder: CompositeBuilder):
 def test_parameter_scan(fully_registered_builder: CompositeBuilder):
     model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
     fully_registered_builder.add_parameter_scan(
-        step_address="local:bsedic.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
+        step_address="local:pbest.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
         step_config={"model_source": model_path},
         input_mappings={"species_concentrations": ["species_concentrations"], "counts": ["species_counts"]},
         config_values={},

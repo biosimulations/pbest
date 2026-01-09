@@ -3,8 +3,8 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from bsedic.containerization.container_constructor import generate_container_def_file
-from bsedic.utils.input_types import (
+from pbest.containerization.container_constructor import generate_container_def_file
+from pbest.utils.input_types import (
     ContainerizationEngine,
     ContainerizationProgramArguments,
     ContainerizationTypes,

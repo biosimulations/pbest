@@ -11,8 +11,8 @@ from typing import Any
 
 from process_bigraph import Composite, gather_emitter_results
 
-from bsedic.globals import get_loaded_core
-from bsedic.utils.input_types import ExecutionProgramArguments
+from pbest.globals import get_loaded_core
+from pbest.utils.input_types import ExecutionProgramArguments
 
 
 def get_program_arguments() -> ExecutionProgramArguments:

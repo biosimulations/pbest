@@ -1,12 +1,12 @@
 import tempfile
 from pathlib import Path
 
-from bsedic.containerization import (
+from pbest.containerization import (
     convert_dependencies_to_installation_string_representation,
     determine_dependencies,
     formulate_dockerfile_for_necessary_env,
 )
-from bsedic.utils.input_types import (
+from pbest.utils.input_types import (
     ContainerizationEngine,
     ContainerizationProgramArguments,
     ContainerizationTypes,
@@ -43,7 +43,7 @@ WORKDIR /runtime
 RUN git clone https://github.com/biosimulations/biosim-registry.git /runtime
 RUN python3 -m pip install -e /runtime
 
-ENTRYPOINT ["python3", "/runtime/bsedic/main.py"]
+ENTRYPOINT ["python3", "/runtime/pbest/main.py"]
 """.strip()
 
 

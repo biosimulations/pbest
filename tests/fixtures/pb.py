@@ -5,8 +5,8 @@ import pytest
 from process_bigraph import ProcessTypes, generate_core
 
 # from biocompose import standard_types
-from bsedic import standard_types
-from bsedic.utils.builder import CompositeBuilder
+from pbest import standard_types
+from pbest.utils.builder import CompositeBuilder
 
 
 @pytest.fixture(scope="function")
@@ -32,7 +32,7 @@ def comparison_document() -> dict[Any, Any]:
         "species_counts": {},
         "tellurium_step": {
             "_type": "step",
-            "address": "local:bsedic.registry.simulators.tellurium_process.TelluriumUTCStep",
+            "address": "local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep",
             "config": {
                 "model_source": model_path,
                 "time": 10,
@@ -45,7 +45,7 @@ def comparison_document() -> dict[Any, Any]:
         },
         "copasi_step": {
             "_type": "step",
-            "address": "local:bsedic.registry.simulators.copasi_process.CopasiUTCStep",
+            "address": "local:pbest.registry.simulators.copasi_process.CopasiUTCStep",
             "config": {
                 "model_source": model_path,
                 "time": 10,
@@ -58,7 +58,7 @@ def comparison_document() -> dict[Any, Any]:
         },
         "comparison": {
             "_type": "step",
-            "address": "local:bsedic.registry.comparison.MSEComparison",
+            "address": "local:pbest.registry.comparison.MSEComparison",
             "config": {},
             "inputs": {
                 "results": ["results"],

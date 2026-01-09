@@ -4,7 +4,7 @@ import tellurium as te
 from process_bigraph import ProcessTypes, Step
 from roadrunner import RoadRunner
 
-from bsedic.registry.utils import model_path_resolution
+from pbest.registry.utils import model_path_resolution
 
 
 class TelluriumStep(Step):
