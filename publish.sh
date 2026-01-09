@@ -1,6 +1,9 @@
 #!/bin/bash
 
-rm -rf ./dist
+if [ -d "dist" ]; then
+  rm -rf ./dist
+fi
+
 VERSION=$(uv version --short)
 echo "Current version is ${VERSION}"
 read -p "Set new version (default is the same): " NEW_VERSION
@@ -14,4 +17,3 @@ if [[ ${TOKEN} == "nope" ]]; then
 fi
 
 uv publish --token=${TOKEN}
-
