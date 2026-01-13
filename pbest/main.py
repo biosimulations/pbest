@@ -13,6 +13,9 @@ from process_bigraph import Composite, gather_emitter_results
 
 from pbest.globals import get_loaded_core
 from pbest.utils.input_types import ExecutionProgramArguments
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_program_arguments() -> ExecutionProgramArguments:
@@ -43,6 +46,18 @@ running Process Bigraph Experiments.""",
         input_file_path=input_file, output_directory=Path(output_dir), interval=args.interval
     )
 
+def get_program_env_variables() -> ExecutionProgramArguments | None:
+    pb_input_path = os.getenv("PB_INPUT_FILE_PATH")
+    output_dir = os.getenv("PB_OUTPUT_DIRECTORY")
+    interval = os.getenv("PB_INTERVAL")
+    if pb_input_path is None or output_dir is None or interval is None:
+        return None
+    return ExecutionProgramArguments(
+        input_file_path=pb_input_path,
+        output_directory=Path(output_dir),
+        interval=int(interval),
+    )
+
 
 def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dict[Any, Any]:
     input_file: str | None = None
@@ -66,10 +81,7 @@ def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dic
         return result
 
 
-def run_experiment(prog_args: ExecutionProgramArguments | None = None) -> None:
-    if prog_args is None:
-        prog_args = get_program_arguments()
-
+def run_experiment(prog_args: ExecutionProgramArguments) -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         schema = get_pb_schema(prog_args, tmp_dir)
         core = get_loaded_core()
@@ -87,3 +99,12 @@ def run_experiment(prog_args: ExecutionProgramArguments | None = None) -> None:
         prepared_composite.save(filename=f"state_{date}#{time}.pbg", outdir=tmp_dir)
 
         shutil.copytree(tmp_dir, prog_args.output_directory, dirs_exist_ok=True)
+
+if __name__ == "__main__":
+    logger.info("Starting execution...")
+    program_arguments = get_program_env_variables()
+    if program_arguments is None:
+        program_arguments = get_program_arguments()
+    logger.info("Got Program Arguments")
+    run_experiment(program_arguments)
+    logger.info("Finished executing experiment.")
