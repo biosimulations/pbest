@@ -4,16 +4,20 @@ RUN apt update
 RUN apt upgrade -y
 RUN apt install -y git curl
 
+RUN mkdir /runtime
+WORKDIR /runtime
+RUN git clone -b publish-repository https://github.com/biosimulations/biosim-registry.git /runtime
+RUN uv pip compile pyproject.toml -o requirements.txt
+# RUN uv pip sync --system --directory /runtime requirements.txt
+
 ## Additional Execution tools (ex. Conda)
 {{ additional_execution_tools }}
 
 ## Dependency Installs
 {{ dependencies_to_install }}
 
-## Execute
-RUN mkdir /runtime
-WORKDIR /runtime
-RUN git clone https://github.com/biosimulations/biosim-registry.git /runtime
-RUN python3 -m pip install -e /runtime
+RUN pip install -r /runtime/requirements.txt
+RUN pip install /runtime
 
+## Execute
 ENTRYPOINT ["python3", "/runtime/pbest/main.py"]
