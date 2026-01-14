@@ -136,7 +136,7 @@ def convert_dependencies_to_installation_string_representation(dependencies: lis
 
 def generate_container_def_file(
     original_program_arguments: ContainerizationProgramArguments,
-) -> tuple[ContainerizationFileRepr, ExperimentPrimaryDependencies]:
+) -> ContainerizationFileRepr:
     new_input_file_path: str
     input_is_archive = original_program_arguments.input_file_path.endswith(
         ".zip"
@@ -164,8 +164,7 @@ def generate_container_def_file(
     # Determine Dependencies
     docker_template: ContainerizationFileRepr
     returned_template: ContainerizationFileRepr
-    primary_dependencies: ExperimentPrimaryDependencies
-    docker_template, primary_dependencies = formulate_dockerfile_for_necessary_env(
+    docker_template = formulate_dockerfile_for_necessary_env(
         required_program_arguments,
         experiment_deps=get_experiment_deps(),
     )
@@ -206,4 +205,4 @@ def generate_container_def_file(
         target_dir = os.path.join(str(original_program_arguments.working_directory), base_name.split(".")[0])
         shutil.make_archive(new_archive_path, "zip", target_dir)
         shutil.move(new_archive_path + ".zip", new_archive_path)  # get rid of extra suffix
-    return returned_template, primary_dependencies
+    return returned_template
