@@ -53,9 +53,10 @@ class ExperimentPrimaryDependencies(BaseModel):
         conda_dependencies: str = "conda:" + ",conda:".join(self.conda_dependencies)
         return pypi_dependencies + "," + conda_dependencies
 
-    def manager_installation_string(self) -> str:
+    @staticmethod
+    def manager_installation_string() -> str:
         additional_execution_tools: str = ""
-        if len(self.get_conda_dependencies()) > 0:
+        if True:
             additional_execution_tools += """WORKDIR /usr/local/bin
 RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba --strip-components=1
 WORKDIR /
