@@ -7,4 +7,13 @@ standard_types = {
     },
     "numeric_results": "map[numeric_result]",
     "columns_of_interest": "list[string]",
+
+    # ReaDDy related types
+    "particle": {
+        "type_name": "string",
+        "position": "tuple[float,float,float]",
+        "neighbor_ids": "list[integer]",
+        "_apply": "set",
+    },
+    "topology": {"type_name": "string", "particle_ids": "list[integer]", "_apply": "set"},
 }
