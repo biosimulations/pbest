@@ -19,13 +19,7 @@ from pbest.utils.input_types import (
 
 def get_experiment_deps() -> ExperimentPrimaryDependencies:
     return ExperimentPrimaryDependencies(
-        [
-            "cobra",
-            "tellurium",
-            "numpy",
-            "matplotlib",
-            "scipy",
-        ],
+        ["cobra", "tellurium", "numpy", "matplotlib", "scipy", "pb_multiscale_actin"],
         ["readdy"],
     )
 

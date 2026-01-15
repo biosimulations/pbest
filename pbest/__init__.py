@@ -7,7 +7,6 @@ standard_types = {
     },
     "numeric_results": "map[numeric_result]",
     "columns_of_interest": "list[string]",
-
     # ReaDDy related types
     "particle": {
         "type_name": "string",

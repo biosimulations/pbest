@@ -96,3 +96,25 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
             json_result = json.load(f)["state"]["comparison_result"]["species_mse"]
 
         comparison_result_dict_test(json_result)
+
+
+@pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
+def test_execution_of_readdy_container(readdy_document: dict[str, Any]) -> None:
+    with tempfile.TemporaryDirectory(delete=False) as tmpdir:
+        input_dir = Path(tmpdir) / "input"
+        output_dir = Path(tmpdir) / "output"
+        os.mkdir(input_dir)
+        os.mkdir(output_dir)
+
+        readdy_pbif = Path(f"{input_dir}{os.sep}readdy.pbif")
+        readdy_document["emitter"]["config"]["output_dir"] = "/experiment/output"
+
+        with open(readdy_pbif, "w") as f:
+            readdy_state_str = json.dumps(readdy_document)
+            f.write(readdy_state_str)
+
+        build_image_and_run_experiment(input_dir, output_dir, readdy_pbif)
+
+        result_file = next(k for k in os.listdir(output_dir) if k == "readdy_result.simularium")
+
+        print(result_file)
