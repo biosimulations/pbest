@@ -21,7 +21,7 @@ dependencies = [
     "pandas>=2.3.3",
     # "polars>=1.35.2",
     "process-bigraph==0.0.51",
-#    "bigraph-schema==0.0.77",
+    "bigraph-schema==0.0.77",
     "pydantic>=2.12.3",
     # "python-libsbml>=5.20.5",
     "spython>=0.3.14",
@@ -92,6 +92,9 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.deptry.per_rule_ignores]
+DEP002 = ["bigraph-schema"]
 
 [tool.ruff]
 target-version = "py39"

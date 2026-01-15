@@ -1457,6 +1457,7 @@ name = "pbest"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "bigraph-schema" },
     { name = "copasi-basico" },
     { name = "jinja2" },
     { name = "libroadrunner" },
@@ -1487,6 +1488,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "bigraph-schema", specifier = "==0.0.77" },
     { name = "copasi-basico" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "libroadrunner" },
