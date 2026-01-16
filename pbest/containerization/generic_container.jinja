@@ -15,16 +15,16 @@ WORKDIR /usr/local/bin
 RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba --strip-components=1
 WORKDIR /
 RUN mkdir /micromamba_env
-RUN micromamba create -p /micromamba_env/runtime_env python=3.12
-RUN eval "$(micromamba shell hook --shell posix)" && micromamba activate /micromamba_env/runtime_env
+RUN micromamba create -p {{ micromamba_env_path }} python=3.12
+RUN eval "$(micromamba shell hook --shell posix)" && micromamba activate {{ micromamba_env_path }}
 
 {{ additional_execution_tools }}
 
 ## Dependency Installs
 {{ dependencies_to_install }}
 
-RUN micromamba run -p /micromamba_env/runtime_env pip install -r /runtime/requirements.txt
-RUN micromamba run -p /micromamba_env/runtime_env pip install /runtime
+RUN micromamba run -p {{ micromamba_env_path }} pip install -r /runtime/requirements.txt
+RUN micromamba run -p {{ micromamba_env_path }} pip install /runtime
 
 ## Execute
-ENTRYPOINT ["micromamba", "run", "-p", "/micromamba_env/runtime_env", "python3", "/runtime/pbest/main.py"]
+ENTRYPOINT ["micromamba", "run", "-p", "{{ micromamba_env_path }}", "python3", "/runtime/pbest/main.py"]
