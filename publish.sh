@@ -11,6 +11,9 @@ NEW_VERSION=${NEW_VERSION:-${VERSION}}
 uv version ${NEW_VERSION}
 uv build
 
+git tag -a ${NEW_VERSION} -m "Release version: ${NEW_VERSION}"
+git push origin ${NEW_VERSION}
+
 TOKEN=${PYPI_TOKEN-"nope"}
 if [[ ${TOKEN} == "nope" ]]; then
     read -s -p "Token for pypi: " TOKEN
