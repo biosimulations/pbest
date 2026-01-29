@@ -23,13 +23,12 @@ def build_image_and_run_experiment(
     input_dir: Path,
     output_dir: Path,
     input_file: Path,
-    experiment_type: str,
     time_to_run: int = 1,
     show_logs: bool = False,
 ) -> None:
     experiment_deps = get_experiment_deps()
     docker_image_path = f"{input_dir}{os.sep}Dockerfile"
-    docker_tag = f"{experiment_type}_crbm_containerization"
+    docker_tag = "test_crbm_containerization"
 
     with open(docker_image_path, "w") as f:
         docker_file = formulate_dockerfile_for_necessary_env(
@@ -102,7 +101,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
             comparison_doc_str = comparison_doc_str.replace(_get_model_path(), f"/experiment/input/{model_name}")
             f.write(comparison_doc_str)
 
-        build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path, experiment_type="comparison")
+        build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path)
 
         result_file = next(k for k in os.listdir(output_dir) if ".pbg" in k)
         with open(os.path.join(output_dir, result_file)) as f:
@@ -126,9 +125,7 @@ def test_execution_of_readdy_container(readdy_document: dict[str, Any]) -> None:
             readdy_state_str = json.dumps(readdy_document)
             f.write(readdy_state_str)
 
-        build_image_and_run_experiment(
-            input_dir, output_dir, readdy_pbif, experiment_type="readdy", time_to_run=3, show_logs=True
-        )
+        build_image_and_run_experiment(input_dir, output_dir, readdy_pbif, time_to_run=3, show_logs=True)
 
         result_file = next(k for k in os.listdir(output_dir) if ".simularium" in k)
 
