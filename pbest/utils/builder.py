@@ -2,7 +2,8 @@ import copy
 from enum import Enum
 from typing import Any, Optional
 
-from process_bigraph import Composite, Process, ProcessTypes, Step
+from process_bigraph import Composite, Process, Step
+from bigraph_schema.core import Core
 
 
 class StepBuilder(Step):
@@ -32,8 +33,8 @@ class CompositeBuilder:
             self.values: list[Any] = values
             self.composite_type: CompositeBuilder.CompositeType = composite_type
 
-    def __init__(self, core: ProcessTypes):
-        self.core: ProcessTypes = core
+    def __init__(self, core: Core):
+        self.core: Core = core
         self.step_number: int = 0
         self.state: dict[str, Any] = {}
 

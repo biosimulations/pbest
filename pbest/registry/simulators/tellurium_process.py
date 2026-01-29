@@ -3,6 +3,9 @@ from typing import Any, ClassVar
 
 import pandas
 import tellurium as te
+from bigraph_schema import allocate_core
+from process_bigraph import Step
+from bigraph_schema.core import Core
 from pandas import DataFrame
 from process_bigraph import ProcessTypes, Step
 from roadrunner import RoadRunner
@@ -224,7 +227,7 @@ def run_ss_test(core: Any) -> None:
 
 
 if __name__ == "__main__":
-    core = ProcessTypes()
-    core.register_process("tellurium_utc", TelluriumUTCStep)
+    core: Core = allocate_core()
+    core.register_link("tellurium_utc", TelluriumUTCStep)
     run_utc_test(core)
     run_ss_test(core)

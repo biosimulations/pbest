@@ -1,6 +1,7 @@
 from typing import Any
 
-from process_bigraph import Composite, ProcessTypes
+from bigraph_schema.core import Core
+from process_bigraph import Composite
 
 
 def comparison_result_dict_test(comparison_result: dict[str, Any]) -> None:
@@ -13,7 +14,7 @@ def comparison_result_dict_test(comparison_result: dict[str, Any]) -> None:
                 assert float(comparison_result[key][compared_to]) != 0
 
 
-def test_mse_comparison(comparison_document: dict[Any, Any], fully_registered_core: ProcessTypes) -> None:
+def test_mse_comparison(comparison_document: dict[Any, Any], fully_registered_core: Core) -> None:
     comparison_composite = Composite(config=comparison_document, core=fully_registered_core)
     comparison_result = comparison_composite.bridge_updates[-1]["result"]["species_mse"]
     comparison_result_dict_test(comparison_result)

@@ -9,8 +9,9 @@ from basico import (
     run_steadystate,
     run_time_course,
 )
+from bigraph_schema import allocate_core, Core
 from pandas import DataFrame
-from process_bigraph import Process, ProcessTypes, Step
+from process_bigraph import Process, Step
 
 from pbest.registry.utils import model_path_resolution
 
@@ -378,10 +379,10 @@ def run_copasi_ss(core: Any) -> None:
 
 
 if __name__ == "__main__":
-    core = ProcessTypes()
-    core.register_process("copasi_utc", CopasiUTCStep)
-    core.register_process("copasi_ss", CopasiSteadyStateStep)
-    core.register_process("copasi_process", CopasiUTCProcess)
+    core: Core = allocate_core()
+    core.register_link("copasi_utc", CopasiUTCStep)
+    core.register_link("copasi_ss", CopasiSteadyStateStep)
+    core.register_link("copasi_process", CopasiUTCProcess)
 
     run_copasi_utc(core=core)
     run_copasi_ss(core=core)

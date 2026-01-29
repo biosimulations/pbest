@@ -1,9 +1,13 @@
+import inspect
 from pathlib import Path
 from typing import Any
 
 import pytest
-from process_bigraph import ProcessTypes, generate_core
+from bigraph_schema import allocate_core
+from bigraph_schema.core import Core
 from process_bigraph.emitter import emitter_from_wires
+from pbest.registry.simulators import TelluriumUTCStep, CopasiUTCStep, CopasiUTCProcess, CopasiSteadyStateStep
+
 
 # from biocompose import standard_types
 from pbest import standard_types
@@ -11,10 +15,16 @@ from pbest.utils.builder import CompositeBuilder
 
 
 @pytest.fixture(scope="function")
-def fully_registered_core() -> ProcessTypes:
-    core = generate_core()
+def fully_registered_core() -> Core:
+    core: Core = allocate_core()
+    manual = {
+        "pbest.registry.simulators.tellurium_process.TelluriumUTCStep": TelluriumUTCStep,
+        "pbest.registry.simulators.copasi_process.CopasiUTCStep": CopasiUTCStep,
+        "pbest.registry.comparison.MSEComparison": ""
+    }
+    core.register_link()
     for k, i in standard_types.items():
-        core.register(k, i)
+        core.register_type(k, i)
     return core
 
 
