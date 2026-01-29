@@ -158,7 +158,7 @@ class CopasiUTCStep(Step, BaseCopasi):
             use_sbml_id=True,
             model=self.dm,
         )
-        if "output_dir" in self.config:
+        if self.config["output_dir"] in self.config and self.config["output_dir"] != "":
             tc.to_csv(os.path.join(self.config["output_dir"], "results.csv"), index=False)
 
         # Time series

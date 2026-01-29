@@ -78,7 +78,7 @@ class TelluriumUTCStep(TelluriumStep):
         # 2) Update species concentrations using Tellurium's setValue
         self.set_road_runner_incoming_values(state)
         output_file = (
-            None if "output_dir" not in self.config else os.path.join(self.config["output_dir"], "results.csv")
+            None if self.config["output_dir"] == "" else os.path.join(self.config["output_dir"], "results.csv")
         )
 
         # 3) Run simulation: from 0 -> self.time, n_points samples
