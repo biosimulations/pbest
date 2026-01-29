@@ -1,3 +1,4 @@
+import os
 from typing import Any, ClassVar
 
 import COPASI
@@ -111,6 +112,7 @@ class CopasiUTCStep(Step, BaseCopasi):
         "model_source": "string",
         "time": "float",
         "n_points": "integer",
+        "output_dir": "string",
     }
 
     def initialize(self, config: Any = None) -> None:
@@ -156,6 +158,8 @@ class CopasiUTCStep(Step, BaseCopasi):
             use_sbml_id=True,
             model=self.dm,
         )
+        if "output_dir" in self.config:
+            tc.to_csv(os.path.join(self.config["output_dir"], "results.csv"), index=False)
 
         # Time series
         time_list = tc.index.to_list()
