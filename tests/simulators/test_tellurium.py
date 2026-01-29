@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pbest import run_experiment
 from pbest.utils.input_types import ExecutionProgramArguments
-from tests.fixtures.utils import root_dir_path, compare_csv
+from tests.fixtures.utils import compare_csv, root_dir_path
 
 experiment = {
     "state": {

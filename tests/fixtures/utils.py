@@ -33,4 +33,3 @@ def compare_csv(experiment_result: str, expected_csv_path: str, difference_toler
                 assert math.isclose(f_report, f_exp, rel_tol=0, abs_tol=difference_tolerance)
             except ValueError:
                 assert report_val == experiment_val  # Must be string portion of report then (columns)
-
