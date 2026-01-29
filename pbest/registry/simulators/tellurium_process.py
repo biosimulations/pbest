@@ -1,8 +1,13 @@
+import os
 from typing import Any, ClassVar
 
+import pandas
 import tellurium as te
 from process_bigraph import ProcessTypes, Step
 from roadrunner import RoadRunner
+from roadrunner._roadrunner import NamedArray
+from numpy.typing import NDArray
+from pandas import DataFrame
 
 from pbest.registry.utils import model_path_resolution
 
@@ -51,6 +56,7 @@ class TelluriumUTCStep(TelluriumStep):
         "model_source": "string",
         "time": "float",
         "n_points": "integer",
+        "output_dir": "string",
     }
 
     def initialize(self, config: Any) -> None:
@@ -73,17 +79,23 @@ class TelluriumUTCStep(TelluriumStep):
         # 1) Choose source
         # 2) Update species concentrations using Tellurium's setValue
         self.set_road_runner_incoming_values(state)
+        save_output_to_dir = "output_dir" in self.config
+        output_file = None if not save_output_to_dir else os.path.join(self.config["output_dir"], "results.csv")
 
         # 3) Run simulation: from 0 -> self.time, n_points samples
-        tc = self.rr.simulate(0, self.time, self.n_points)
-        colnames = list(tc.colnames)
+        tc = self.rr.simulate(0, self.time, self.n_points, output_file=output_file)
+        if save_output_to_dir:
+            tc = pandas.read_csv(output_file)
+        else:
+            tc = DataFrame(data=tc.tolist(), columns=tc.colnames)
+        colnames: list[str] = tc.columns.tolist()
 
         # Build a mapping from *normalized* column names to indices.
         # This turns "[S1]" -> "S1", etc.
         norm_to_index: dict[str, int] = {name.strip("[]"): i for i, name in enumerate(colnames)}
 
         time_idx = norm_to_index["time"]
-        time = tc[:, time_idx].tolist()
+        time = tc.values[:, time_idx].tolist()
 
         # 4) Species trajectories
         species_cols: dict[str, int] = {}
@@ -98,7 +110,7 @@ class TelluriumUTCStep(TelluriumStep):
         # For each time point, set state and query reaction rates
         for row in range(tc.shape[0]):
             for sid, idx in species_cols.items():
-                self.rr.setValue(sid, float(tc[row, idx]))
+                self.rr.setValue(sid, float(tc.values[row, idx]))
 
             rates = self.rr.getReactionRates()
             for j, rid in enumerate(self.reaction_ids):
@@ -107,13 +119,13 @@ class TelluriumUTCStep(TelluriumStep):
         # 6) Restore last state (final row of the timecourse)
         last_row = tc.shape[0] - 1
         for sid, idx in species_cols.items():
-            self.rr.setValue(sid, float(tc[last_row, idx]))
+            self.rr.setValue(sid, float(tc.values[last_row, idx]))
 
         # 7) Send update — structured for easy comparison / aggregation
         result = {
             "time": time,
             "columns": [c.strip("[]") for c in colnames if c != "time"],
-            "values": tc[:, 1:].tolist(),
+            "values": tc.values[:, 1:].tolist(),
             # "n_spacial_dimensions": (tc.shape[0], tc.shape[1] - 1),
             # "fluxes": flux_json,
         }
