@@ -3,11 +3,9 @@ from typing import Any, ClassVar
 
 import pandas
 import tellurium as te
+from pandas import DataFrame
 from process_bigraph import ProcessTypes, Step
 from roadrunner import RoadRunner
-from roadrunner._roadrunner import NamedArray
-from numpy.typing import NDArray
-from pandas import DataFrame
 
 from pbest.registry.utils import model_path_resolution
 
@@ -79,15 +77,13 @@ class TelluriumUTCStep(TelluriumStep):
         # 1) Choose source
         # 2) Update species concentrations using Tellurium's setValue
         self.set_road_runner_incoming_values(state)
-        save_output_to_dir = "output_dir" in self.config
-        output_file = None if not save_output_to_dir else os.path.join(self.config["output_dir"], "results.csv")
+        output_file = (
+            None if "output_dir" not in self.config else os.path.join(self.config["output_dir"], "results.csv")
+        )
 
         # 3) Run simulation: from 0 -> self.time, n_points samples
         tc = self.rr.simulate(0, self.time, self.n_points, output_file=output_file)
-        if save_output_to_dir:
-            tc = pandas.read_csv(output_file)
-        else:
-            tc = DataFrame(data=tc.tolist(), columns=tc.colnames)
+        tc = DataFrame(data=tc.tolist(), columns=tc.colnames) if output_file is None else pandas.read_csv(output_file)
         colnames: list[str] = tc.columns.tolist()
 
         # Build a mapping from *normalized* column names to indices.

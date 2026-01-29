@@ -16,3 +16,5 @@ standard_types = {
     },
     "topology": {"type_name": "string", "particle_ids": "list[integer]", "_apply": "set"},
 }
+__all__ = ["run_experiment", "standard_types"]
+from pbest.main import run_experiment  # noqa: E402
