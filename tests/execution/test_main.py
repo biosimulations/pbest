@@ -14,11 +14,11 @@ from pbest.utils.input_types import ExecutionProgramArguments
 def test_run_experiment(comparison_document: dict[Any, Any], fully_registered_core: ProcessTypes) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         comp = Composite(config=comparison_document, core=fully_registered_core)
-        comp.save(filename="input.pbif", outdir=tmpdir)
+        comp.save(filename="input.pbg", outdir=tmpdir)
 
         os.mkdir(f"{tmpdir}/output")
         program_arguments = ExecutionProgramArguments(
-            input_file_path=f"{tmpdir}/input.pbif", output_directory=Path(f"{tmpdir}/output"), interval=1
+            input_file_path=f"{tmpdir}/input.pbg", output_directory=Path(f"{tmpdir}/output"), interval=1
         )
         run_experiment(program_arguments)
 

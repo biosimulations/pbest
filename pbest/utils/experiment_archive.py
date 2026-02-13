@@ -11,7 +11,7 @@ def _extract_pbif_from_zip(archive_path: str, output_dir: str) -> str:
     with zipfile.ZipFile(archive_path) as archive:
         for name in archive.namelist():
             current_file = archive.extract(name, extraction_destination)
-            if (not name.endswith(".pbif") and not name.endswith(".json")) or "/__MACOSX/._" in current_file:
+            if (not name.endswith(".pbg") and not name.endswith(".json")) or "/__MACOSX/._" in current_file:
                 continue
             target_pbif = current_file  # Note: This scheme does not support multiple pbif!
             # TODO: Allow for multi-pbif files? May require omex enforcment...

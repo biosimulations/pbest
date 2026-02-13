@@ -93,7 +93,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
         os.mkdir(output_dir)
 
         model_name = "model.xml"
-        comparison_pbg_path = Path(f"{input_dir}{os.sep}comparison.pbif")
+        comparison_pbg_path = Path(f"{input_dir}{os.sep}comparison.pbg")
 
         shutil.copyfile(_get_model_path(), input_dir / model_name)
         with open(comparison_pbg_path, "w") as f:
@@ -118,7 +118,7 @@ def test_execution_of_readdy_container(readdy_document: dict[str, Any]) -> None:
         os.mkdir(input_dir)
         os.mkdir(output_dir)
 
-        readdy_pbif = Path(f"{input_dir}{os.sep}readdy.pbif")
+        readdy_pbif = Path(f"{input_dir}{os.sep}readdy.pbg")
         readdy_document["state"]["emitter"]["config"]["output_dir"] = "/experiment/output"
 
         with open(readdy_pbif, "w") as f:

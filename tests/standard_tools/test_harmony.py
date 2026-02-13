@@ -104,7 +104,7 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder):
 async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder):
     create_parameter_scan(fully_registered_builder)
     with tempfile.TemporaryDirectory() as temp_dir:
-        input_path = os.path.join(temp_dir, "input.pbif")
+        input_path = os.path.join(temp_dir, "input.pbg")
         with open(input_path, "w") as input_file:
             json.dump({"state": fully_registered_builder.state}, input_file)
 

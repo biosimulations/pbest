@@ -83,7 +83,7 @@ def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dic
         with zipfile.ZipFile(prog_args.input_file_path, "r") as zf:
             zf.extractall(working_dir)
         for file_name in os.listdir(working_dir):
-            if not (file_name.endswith(".pbif") or file_name.endswith(".json")):
+            if not (file_name.endswith(".pbg") or file_name.endswith(".json")):
                 continue
             input_file = os.path.join(working_dir, file_name)
             break
@@ -137,7 +137,7 @@ async def run_remote_experiment(
         client = compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
 
     with open(prog_args.input_file_path, "rb") as input_file:
-        sent_file = File(file_name="experiment.pbif", payload=input_file)
+        sent_file = File(file_name="experiment.pbg", payload=input_file)
         result, sim_id = await run_simulation_and_wait.async_call(experiment_file=sent_file, client=client)
 
     with open(os.path.join(prog_args.output_directory, "output.zip"), "wb") as output_file:
