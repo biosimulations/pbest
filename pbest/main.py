@@ -89,7 +89,7 @@ def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dic
             break
 
     if input_file is None:
-        err = f"Could not find any PBIF or JSON file in or at `{prog_args.input_file_path}`."
+        err = f"Could not find any PBG or JSON file in or at `{prog_args.input_file_path}`."
         raise FileNotFoundError(err)
     with open(input_file) as input_data:
         result: dict[Any, Any] = json.load(input_data)
