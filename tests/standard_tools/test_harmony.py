@@ -83,8 +83,7 @@ def perform_parameter_scan_comparison(results: dict[Any, Any]):
             assert math.isclose(parameter_steady_state[j], steady_state_values[0][j], rel_tol=0, abs_tol=1e-10)
 
 
-def create_parameter_scan(fully_registered_builder: CompositeBuilder) -> None:
-    model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
+def create_parameter_scan(fully_registered_builder: CompositeBuilder, model_path: str = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml") -> None:
     fully_registered_builder.add_parameter_scan(
         step_address="local:pbest.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
         step_config={"model_source": model_path},
@@ -102,20 +101,25 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder):
 
 @pytest.mark.asyncio
 async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder):
-    create_parameter_scan(fully_registered_builder)
+    create_parameter_scan(fully_registered_builder, model_path="biomodel.xml")
     with tempfile.TemporaryDirectory() as temp_dir:
-        input_path = os.path.join(temp_dir, "input.pbg")
+        input_path = os.path.join(temp_dir, "input.pbif")
+        model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
         with open(input_path, "w") as input_file:
             json.dump({"state": fully_registered_builder.state}, input_file)
+        omex_path = os.path.join(temp_dir, "input.omex")
+        with zipfile.ZipFile(omex_path, "w") as omex_input:
+            omex_input.write(input_path, arcname="input.pbif")
+            omex_input.write(model_path, arcname="biomodel.xml")
 
         await run_remote_experiment(
-            prog_args=ExecutionProgramArguments(input_file_path=input_path, interval=1, output_directory=Path(temp_dir))
+            prog_args=ExecutionProgramArguments(input_file_path=omex_path, interval=1, output_directory=Path(temp_dir))
         )
 
         with zipfile.ZipFile(os.path.join(temp_dir, "output.zip")) as output:
             output.extractall(temp_dir)
 
-        result_pbg = next(k for k in os.listdir(temp_dir) if ".pbg" in k)
+        result_pbg = next(k for k in os.listdir(temp_dir) if ".pbif" in k)
 
         with open(os.path.join(temp_dir, result_pbg)) as result_file:
             json_data = json.load(result_file)
