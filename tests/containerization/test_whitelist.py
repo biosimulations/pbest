@@ -76,7 +76,7 @@
 #         whitelist_tokens = whitelist_str.strip().split("\n")
 #         zip_path = os.path.join(tmpdir, "inputArchive.omex")
 #         with zipfile.ZipFile(zip_path, "a") as zip_ref:
-#             zip_ref.writestr("inputFile.pbif", input_pbif_as_string)
+#             zip_ref.writestr("inputFile.pbg", input_pbif_as_string)
 #         test_args = ExecutionProgramArguments(
 #             zip_path, tmpdir, whitelist_tokens, ContainerizationTypes.SINGLE, ContainerizationEngine.DOCKER
 #         )

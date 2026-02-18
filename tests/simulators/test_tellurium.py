@@ -27,7 +27,7 @@ experiment = {
 
 def test_tellurium() -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
-        input_path = os.path.join(tmpdir, "input.pbif")
+        input_path = os.path.join(tmpdir, "input.pbg")
         experiment["state"]["time_course"]["config"]["output_dir"] = tmpdir
         with open(input_path, "w") as f:
             json.dump(experiment, f)

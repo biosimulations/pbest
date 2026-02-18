@@ -93,7 +93,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
         os.mkdir(output_dir)
 
         model_name = "model.xml"
-        comparison_pbg_path = Path(f"{input_dir}{os.sep}comparison.pbif")
+        comparison_pbg_path = Path(f"{input_dir}{os.sep}comparison.pbg")
 
         shutil.copyfile(_get_model_path(), input_dir / model_name)
         with open(comparison_pbg_path, "w") as f:
@@ -103,7 +103,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
 
         build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path)
 
-        result_file = next(k for k in os.listdir(output_dir) if ".pbg" in k)
+        result_file = next(k for k in os.listdir(output_dir) if (".pbg" in k) and ("state" in k))
         with open(os.path.join(output_dir, result_file)) as f:
             json_result = json.load(f)["state"]["comparison_result"]["species_mse"]
 
@@ -118,7 +118,7 @@ def test_execution_of_readdy_container(readdy_document: dict[str, Any]) -> None:
         os.mkdir(input_dir)
         os.mkdir(output_dir)
 
-        readdy_pbif = Path(f"{input_dir}{os.sep}readdy.pbif")
+        readdy_pbif = Path(f"{input_dir}{os.sep}readdy.pbg")
         readdy_document["state"]["emitter"]["config"]["output_dir"] = "/experiment/output"
 
         with open(readdy_pbif, "w") as f:

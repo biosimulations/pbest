@@ -1,7 +1,16 @@
+import json
 import math
 import os
+import tempfile
+import zipfile
+from pathlib import Path
+from typing import Any
 
+import pytest
+
+from pbest.main import run_remote_experiment
 from pbest.utils.builder import CompositeBuilder
+from pbest.utils.input_types import ExecutionProgramArguments
 
 
 def comparison_builder(builder: CompositeBuilder) -> None:
@@ -42,17 +51,7 @@ def test_comparison_example(fully_registered_builder: CompositeBuilder):
                 assert value != 0
 
 
-def test_parameter_scan(fully_registered_builder: CompositeBuilder):
-    model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
-    fully_registered_builder.add_parameter_scan(
-        step_address="local:pbest.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
-        step_config={"model_source": model_path},
-        input_mappings={"species_concentrations": ["species_concentrations"], "counts": ["species_counts"]},
-        config_values={},
-        state_values={"species_concentrations": {"PX": [1, 30000], "PY": [1, 2000], "PZ": [1, 5000]}},
-    )
-
-    comp = fully_registered_builder.build()
+def perform_parameter_scan_comparison(results: dict[Any, Any]):
     steady_state_values = [
         [
             240.8222635574016,
@@ -73,7 +72,6 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder):
     ]
 
     # Seems as if values don't change over parameter scan, cause for concern?
-    results = comp.state["parameter_scan_0"]["results"]
     for k in results:
         parameter_jacobian = results[k]["jacobian"]["values"]
         parameter_steady_state = results[k]["steady_state"]["values"][0]
@@ -83,3 +81,49 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder):
 
         for j in range(len(parameter_steady_state)):
             assert math.isclose(parameter_steady_state[j], steady_state_values[0][j], rel_tol=0, abs_tol=1e-10)
+
+
+def create_parameter_scan(
+    fully_registered_builder: CompositeBuilder,
+    model_path: str = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml",
+) -> None:
+    fully_registered_builder.add_parameter_scan(
+        step_address="local:pbest.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
+        step_config={"model_source": model_path},
+        input_mappings={"species_concentrations": ["species_concentrations"], "counts": ["species_counts"]},
+        config_values={},
+        state_values={"species_concentrations": {"PX": [1, 30000], "PY": [1, 2000], "PZ": [1, 5000]}},
+    )
+
+
+def test_parameter_scan(fully_registered_builder: CompositeBuilder):
+    create_parameter_scan(fully_registered_builder)
+    comp = fully_registered_builder.build()
+    perform_parameter_scan_comparison(comp.state["parameter_scan_0"]["results"])
+
+
+@pytest.mark.asyncio
+async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder):
+    create_parameter_scan(fully_registered_builder, model_path="biomodel.xml")
+    with tempfile.TemporaryDirectory() as temp_dir:
+        input_path = os.path.join(temp_dir, "input.pbif")
+        model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
+        with open(input_path, "w") as input_file:
+            json.dump({"state": fully_registered_builder.state}, input_file)
+        omex_path = os.path.join(temp_dir, "input.omex")
+        with zipfile.ZipFile(omex_path, "w") as omex_input:
+            omex_input.write(input_path, arcname="input.pbif")
+            omex_input.write(model_path, arcname="biomodel.xml")
+
+        await run_remote_experiment(
+            prog_args=ExecutionProgramArguments(input_file_path=omex_path, interval=1, output_directory=Path(temp_dir))
+        )
+
+        with zipfile.ZipFile(os.path.join(temp_dir, "output.zip")) as output:
+            output.extractall(temp_dir)
+
+        result_pbg = next(k for k in os.listdir(temp_dir) if ".pbif" in k)
+
+        with open(os.path.join(temp_dir, result_pbg)) as result_file:
+            json_data = json.load(result_file)
+            perform_parameter_scan_comparison(json_data["state"]["parameter_scan_0"]["results"])

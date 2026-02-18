@@ -69,6 +69,4 @@ def determine_dependencies(  # noqa: C901
         version_str = match[2] if package_version != "" else ""
         complete_match = f"python:{source_name}<{package_name}{version_str}>@{match[4]}"
         adjusted_search_string = adjusted_search_string.replace(complete_match, f"local:{match[4]}")
-    return ExperimentPrimaryDependencies(
-        approved_dependencies["pypi"], approved_dependencies["conda"]
-    ), adjusted_search_string.strip()
+    return ExperimentPrimaryDependencies([], []), adjusted_search_string.strip()

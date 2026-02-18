@@ -2,6 +2,7 @@ import os
 import shutil
 
 from jinja2 import Template
+from pydantic import HttpUrl
 from spython.main.parse.parsers import DockerParser  # type: ignore[import-untyped]
 from spython.main.parse.writers import SingularityWriter  # type: ignore[import-untyped]
 
@@ -11,6 +12,8 @@ from pbest.utils.input_types import (
     ContainerizationFileRepr,
     ContainerizationProgramArguments,
     ContainerizationTypes,
+    DependencyTypes,
+    ExperimentDependency,
     ExperimentPrimaryDependencies,
 )
 
@@ -18,9 +21,23 @@ micromamba_env_path = "/micromamba_env/runtime_env"
 
 
 def get_experiment_deps() -> ExperimentPrimaryDependencies:
+    pypi_deps = ["cobra", "tellurium", "numpy", "matplotlib", "scipy", "pb_multiscale_actin"]
     return ExperimentPrimaryDependencies(
-        ["cobra", "tellurium", "numpy", "matplotlib", "scipy", "pb_multiscale_actin"],
-        ["readdy"],
+        pypi_dependencies=[
+            ExperimentDependency(
+                dependency_name=name,
+                url_reference=DependencyTypes.get_pypi_url(name),
+                dependency_type=DependencyTypes.PYPI,
+            )
+            for name in pypi_deps
+        ],
+        conda_dependencies=[
+            ExperimentDependency(
+                dependency_name="readdy",
+                url_reference=HttpUrl("https://github.com/readdy/readdy"),
+                dependency_type=DependencyTypes.CONDA,
+            )
+        ],
     )
 
 
@@ -37,21 +54,20 @@ def formulate_dockerfile_for_necessary_env(
     for p in range(len(pypi_deps)):
         if p == 0:
             deps_install_command += (
-                f"RUN micromamba run -p {micromamba_env_path} python3 -m pip install '{pypi_deps[p]}'"
+                f"RUN micromamba run -p {micromamba_env_path} python3 -m pip install '{pypi_deps[p].get_name()}'"
             )
         elif p != len(pypi_deps) - 1:
-            deps_install_command += f" '{pypi_deps[p]}'"
+            deps_install_command += f" '{pypi_deps[p].get_name()}'"
         else:
-            deps_install_command += f" '{pypi_deps[p]}'\n"
+            deps_install_command += f" '{pypi_deps[p].get_name()}'\n"
     for c in experiment_deps.get_conda_dependencies():
         deps_install_command += (
-            f"RUN micromamba install -c conda-forge -p {micromamba_env_path} {c} python=3.12 --yes\n"
+            f"RUN micromamba install -c conda-forge -p {micromamba_env_path} {c.get_name()} python=3.12 --yes\n"
         )
 
     with open(__file__.rsplit(os.sep, maxsplit=1)[0] + f"{os.sep}generic_container.jinja") as f:
         template = Template(f.read())
         templated_container = template.render(
-            additional_execution_tools=experiment_deps.manager_installation_string(),
             dependencies_to_install=deps_install_command,
             micromamba_env_path=micromamba_env_path,
         )

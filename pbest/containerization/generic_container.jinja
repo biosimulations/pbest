@@ -18,8 +18,6 @@ RUN mkdir /micromamba_env
 RUN micromamba create -p {{ micromamba_env_path }} python=3.12
 RUN eval "$(micromamba shell hook --shell posix)" && micromamba activate {{ micromamba_env_path }}
 
-{{ additional_execution_tools }}
-
 ## Dependency Installs
 {{ dependencies_to_install }}
 

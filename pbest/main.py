@@ -10,6 +10,11 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+import compose_api_client
+from compose_api_client.api.simulation import run_simulation_and_wait
+from compose_api_client.models import SimulationExperiment
+from compose_api_client.types import File
+from httpx import Client
 from process_bigraph import Composite, gather_emitter_results
 
 from pbest.globals import get_loaded_core, set_logging_config
@@ -78,13 +83,13 @@ def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dic
         with zipfile.ZipFile(prog_args.input_file_path, "r") as zf:
             zf.extractall(working_dir)
         for file_name in os.listdir(working_dir):
-            if not (file_name.endswith(".pbif") or file_name.endswith(".json")):
+            if not (file_name.endswith(".pbg") or file_name.endswith(".json")):
                 continue
             input_file = os.path.join(working_dir, file_name)
             break
 
     if input_file is None:
-        err = f"Could not find any PBIF or JSON file in or at `{prog_args.input_file_path}`."
+        err = f"Could not find any PBG or JSON file in or at `{prog_args.input_file_path}`."
         raise FileNotFoundError(err)
     with open(input_file) as input_data:
         result: dict[Any, Any] = json.load(input_data)
@@ -123,6 +128,27 @@ def run_experiment(prog_args: ExecutionProgramArguments) -> None:
         )
         shutil.copytree(tmp_dir, prog_args.output_directory, dirs_exist_ok=True)
         logger.debug(f"Contents copied to output directory [{os.listdir(prog_args.output_directory)}]")
+
+
+async def run_remote_experiment(
+    prog_args: ExecutionProgramArguments, client: Client | None = None
+) -> SimulationExperiment:
+    if client is None:
+        client = compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
+
+    extension = prog_args.input_file_path.rsplit(".", maxsplit=1)[-1]
+    if extension not in ["json", "omex", "pbg", "sbml"]:
+        err_msg = f"File extension {extension} not supported."
+        raise ValueError(err_msg)
+
+    with open(prog_args.input_file_path, "rb") as input_file:
+        sent_file = File(file_name=f"experiment.{extension}", payload=input_file)
+        result, sim_id = await run_simulation_and_wait.async_call(experiment_file=sent_file, client=client)
+
+    with open(os.path.join(prog_args.output_directory, "output.zip"), "wb") as output_file:
+        output_file.write(result.content)
+
+    return sim_id
 
 
 if __name__ == "__main__":

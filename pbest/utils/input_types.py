@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
+from pydantic.dataclasses import dataclass
 
 
 class ContainerizationTypes(Enum):
@@ -22,49 +22,35 @@ class ContainerizationFileRepr(BaseModel):
     representation: str
 
 
-class ExperimentPrimaryDependencies(BaseModel):
-    pypi_dependencies: list[str]
-    conda_dependencies: list[str]
-    _compact_repr: str
+class DependencyTypes(Enum):
+    PYPI = "pypi"
+    CONDA = "conda"
 
     @staticmethod
-    def from_compact_repr(representation: str) -> "ExperimentPrimaryDependencies":
-        split_dep_type = representation.split(";")
-        if len(split_dep_type) != 2:
-            err_msg = f"Invalid primary dependency representation: {representation}"
-            raise ValueError(err_msg)
-        pypi_dependencies = split_dep_type[0].split(",")
-        conda_dependencies = split_dep_type[1].split(",")
-        return ExperimentPrimaryDependencies(pypi_dependencies=pypi_dependencies, conda_dependencies=conda_dependencies)
+    def get_pypi_url(package_name: str) -> HttpUrl:
+        return HttpUrl(f"https://pypi.org/project/{package_name}/")
 
-    def __init__(self, pypi_dependencies: list[str], conda_dependencies: list[str]) -> None:
-        super().__init__(pypi_dependencies=pypi_dependencies, conda_dependencies=conda_dependencies)
-        self.pypi_dependencies = pypi_dependencies
-        self.conda_dependencies = conda_dependencies
-        self._compact_repr = ",".join(pypi_dependencies) + ";" + ",".join(conda_dependencies)
 
-    def __str__(self) -> str:
-        pypi_dependencies: str = "PyPi Dependencies:\n\t" + "\n\t".join(self.pypi_dependencies)
-        conda_dependencies: str = "Conda Dependencies:\n\t" + "\n\t".join(self.conda_dependencies)
-        return pypi_dependencies + "\n" + ("-" * 25) + "\n" + conda_dependencies
+@dataclass(frozen=True)
+class ExperimentDependency:
+    dependency_name: str
+    url_reference: HttpUrl
+    dependency_type: DependencyTypes
+    version: str = ""
 
-    def __repr__(self) -> str:
-        pypi_dependencies: str = "pypi:" + ",pypi:".join(self.pypi_dependencies)
-        conda_dependencies: str = "conda:" + ",conda:".join(self.conda_dependencies)
-        return pypi_dependencies + "," + conda_dependencies
+    def get_name(self) -> str:
+        return self.dependency_name
 
-    @staticmethod
-    def manager_installation_string() -> str:
-        additional_execution_tools: str = ""
-        return additional_execution_tools
 
-    def get_compact_repr(self) -> str:
-        return self._compact_repr
+@dataclass(frozen=True)
+class ExperimentPrimaryDependencies:
+    pypi_dependencies: list[ExperimentDependency]
+    conda_dependencies: list[ExperimentDependency]
 
-    def get_pypi_dependencies(self) -> list[str]:
+    def get_pypi_dependencies(self) -> list[ExperimentDependency]:
         return self.pypi_dependencies
 
-    def get_conda_dependencies(self) -> list[str]:
+    def get_conda_dependencies(self) -> list[ExperimentDependency]:
         return self.conda_dependencies
 
 

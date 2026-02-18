@@ -26,7 +26,7 @@ def get_program_arguments() -> ContainerizationProgramArguments:
         or not os.path.isfile(args.input_file_path)
         or not (
             args.input_file_path.endswith(".json")
-            or args.input_file_path.endswith(".pbif")
+            or args.input_file_path.endswith(".pbg")
             or args.input_file_path.endswith(".zip")
             or args.input_file_path.endswith(".omex")
         )

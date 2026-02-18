@@ -11,7 +11,7 @@
 #     with tempfile.TemporaryDirectory() as tmpdir:
 #         zip_path = os.path.join(tmpdir, "inputArchive.omex")
 #         with zipfile.ZipFile(zip_path, "a") as zip_ref:
-#             zip_ref.writestr("inputFile.pbif", fake_input_file)
+#             zip_ref.writestr("inputFile.pbg", fake_input_file)
 #         test_args = ContainerizationProgramArguments(
 #             input_file_path=zip_path,
 #             working_directory=Path(tmpdir),
