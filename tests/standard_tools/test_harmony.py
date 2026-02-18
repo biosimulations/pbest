@@ -83,7 +83,10 @@ def perform_parameter_scan_comparison(results: dict[Any, Any]):
             assert math.isclose(parameter_steady_state[j], steady_state_values[0][j], rel_tol=0, abs_tol=1e-10)
 
 
-def create_parameter_scan(fully_registered_builder: CompositeBuilder, model_path: str = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml") -> None:
+def create_parameter_scan(
+    fully_registered_builder: CompositeBuilder,
+    model_path: str = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml",
+) -> None:
     fully_registered_builder.add_parameter_scan(
         step_address="local:pbest.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
         step_config={"model_source": model_path},
