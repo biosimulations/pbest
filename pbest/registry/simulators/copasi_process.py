@@ -9,7 +9,7 @@ from basico import (
     run_steadystate,
     run_time_course,
 )
-from bigraph_schema import allocate_core, Core
+from bigraph_schema import Core, allocate_core
 from pandas import DataFrame
 from process_bigraph import Process, Step
 

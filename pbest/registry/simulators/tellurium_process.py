@@ -4,10 +4,9 @@ from typing import Any, ClassVar
 import pandas
 import tellurium as te
 from bigraph_schema import allocate_core
-from process_bigraph import Step
 from bigraph_schema.core import Core
 from pandas import DataFrame
-from process_bigraph import ProcessTypes, Step
+from process_bigraph import Step
 from roadrunner import RoadRunner
 
 from pbest.registry.utils import model_path_resolution

@@ -2,8 +2,8 @@ import copy
 from enum import Enum
 from typing import Any, Optional
 
-from process_bigraph import Composite, Process, Step
 from bigraph_schema.core import Core
+from process_bigraph import Composite, Process, Step
 
 
 class StepBuilder(Step):
