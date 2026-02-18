@@ -103,7 +103,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
 
         build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path)
 
-        result_file = next(k for k in os.listdir(output_dir) if ".pbg" in k)
+        result_file = next(k for k in os.listdir(output_dir) if (".pbg" in k) and ("state" in k))
         with open(os.path.join(output_dir, result_file)) as f:
             json_result = json.load(f)["state"]["comparison_result"]["species_mse"]
 
