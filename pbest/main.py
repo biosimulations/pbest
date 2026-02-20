@@ -11,9 +11,9 @@ from pathlib import Path
 from typing import Any
 
 import compose_api_client
-from compose_api_client.api.simulation import run_simulation_and_wait
 from compose_api_client.models import SimulationExperiment
 from compose_api_client.types import File
+from compose_api_client.utils import run_simulation_and_wait
 from httpx import Client
 from process_bigraph import Composite, gather_emitter_results
 
@@ -42,9 +42,8 @@ running Process Bigraph Experiments.""",
     )
 
     if not os.path.isfile(input_file):
-        print(
-            "error: `input_file_path` must be a JSON/PBIF file (or an archive containing one) that exists!",
-            file=sys.stderr,
+        logger.error(
+            f"`input_file_path`:{input_file}  must be a JSON/PBG file (or an archive containing one) that exists!"
         )
         sys.exit(11)
     return ExecutionProgramArguments(
@@ -143,7 +142,9 @@ async def run_remote_experiment(
 
     with open(prog_args.input_file_path, "rb") as input_file:
         sent_file = File(file_name=f"experiment.{extension}", payload=input_file)
-        result, sim_id = await run_simulation_and_wait.async_call(experiment_file=sent_file, client=client)
+        result, sim_id = await run_simulation_and_wait.async_call(
+            experiment_file=sent_file, interval=prog_args.interval, client=client
+        )
 
     with open(os.path.join(prog_args.output_directory, "output.zip"), "wb") as output_file:
         output_file.write(result.content)
