@@ -57,9 +57,10 @@ class CompositeBuilder:
 
     def add_comparison_step(self, comparison_name: str, store_with_values: list[str]) -> None:
         comparison_step_key = self._allocate_step_key("comparison_step")
+        self.state["comparison_results"] = {comparison_name: {"species_mse": {}}}
         self.state[comparison_step_key] = {
             "_type": "step",
-            "address": "local:pbest.registry.comparison.MSEComparison",
+            "address": "local:pbsim_common.comparison.MSEComparison",
             "config": {},
             "inputs": {
                 "results": store_with_values,

@@ -5,7 +5,7 @@ description = "BioSim Registry is a project focused on delivering high quality p
 authors = [{ name = "Center for Reproducable Biological Modeling", email = "evalencia@uchc.edu" }]
 readme = "README.md"
 keywords = ['python']
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.12,<3.13"
 classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
@@ -33,6 +33,7 @@ dependencies = [
     "python-copasi",
     "compose-api-client==0.1.4",
     "httpx>=0.28.1",
+    "pbsim-common",
 ]
 
 [project.urls]
@@ -165,3 +166,4 @@ source = ["pbest"]
 [tool.uv.sources]
 # biocompose = { git = "https://github.com/vivarium-collective/biocompose", rev = "numerical-types" }
 # biocompose =  { path = "../biocompose", editable = true }
+pbsim_common =  { path = "../pb_components/pbsim_common", editable = true }

@@ -1,13 +1,13 @@
-import inspect
+import importlib.metadata
 from pathlib import Path
 from typing import Any
 
 import pytest
 from bigraph_schema import allocate_core
 from bigraph_schema.core import Core
+from pbsim_common.comparison import MSEComparison
+from pbsim_common.simulators import TelluriumUTCStep, CopasiUTCStep, TelluriumSteadyStateStep
 from process_bigraph.emitter import emitter_from_wires
-from pbest.registry.simulators import TelluriumUTCStep, CopasiUTCStep, CopasiUTCProcess, CopasiSteadyStateStep
-
 
 # from biocompose import standard_types
 from pbest import standard_types
@@ -18,13 +18,15 @@ from pbest.utils.builder import CompositeBuilder
 def fully_registered_core() -> Core:
     core: Core = allocate_core()
     manual = {
-        "pbest.registry.simulators.tellurium_process.TelluriumUTCStep": TelluriumUTCStep,
-        "pbest.registry.simulators.copasi_process.CopasiUTCStep": CopasiUTCStep,
-        "pbest.registry.comparison.MSEComparison": ""
+        "pbsim_common.simulators.tellurium_process.TelluriumUTCStep": TelluriumUTCStep,
+        "pbsim_common.simulators.tellurium_process.TelluriumSteadyStateStep": TelluriumSteadyStateStep,
+        "pbsim_common.simulators.copasi_process.CopasiUTCStep": CopasiUTCStep,
+        "pbsim_common.comparison.MSEComparison": MSEComparison
     }
-    core.register_link()
     for k, i in standard_types.items():
         core.register_type(k, i)
+    for k, i in manual.items():
+        core.register_link(k, i)
     return core
 
 
@@ -147,9 +149,10 @@ def comparison_document() -> dict[Any, Any]:
         # provide initial values to overwrite those in the configured model
         "species_concentrations": {},
         "species_counts": {},
+        "comparison_result": {"species_mse": {}},
         "tellurium_step": {
             "_type": "step",
-            "address": "local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep",
+            "address": "local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
             "config": {
                 "model_source": model_path,
                 "time": 10,
@@ -162,7 +165,7 @@ def comparison_document() -> dict[Any, Any]:
         },
         "copasi_step": {
             "_type": "step",
-            "address": "local:pbest.registry.simulators.copasi_process.CopasiUTCStep",
+            "address": "local:pbsim_common.simulators.copasi_process.CopasiUTCStep",
             "config": {
                 "model_source": model_path,
                 "time": 10,
@@ -175,7 +178,7 @@ def comparison_document() -> dict[Any, Any]:
         },
         "comparison": {
             "_type": "step",
-            "address": "local:pbest.registry.comparison.MSEComparison",
+            "address": "local:pbsim_common.comparison.MSEComparison",
             "config": {},
             "inputs": {
                 "results": ["results"],
@@ -186,7 +189,5 @@ def comparison_document() -> dict[Any, Any]:
         },
     }
 
-    bridge = {"outputs": {"result": ["comparison_result"]}}
-
-    document = {"state": state, "bridge": bridge}
+    document = {"state": state}
     return document

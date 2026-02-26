@@ -16,5 +16,5 @@ def comparison_result_dict_test(comparison_result: dict[str, Any]) -> None:
 
 def test_mse_comparison(comparison_document: dict[Any, Any], fully_registered_core: Core) -> None:
     comparison_composite = Composite(config=comparison_document, core=fully_registered_core)
-    comparison_result = comparison_composite.bridge_updates[-1]["result"]["species_mse"]
+    comparison_result = comparison_composite.state["comparison_result"]["species_mse"]
     comparison_result_dict_test(comparison_result)
