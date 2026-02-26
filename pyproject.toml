@@ -33,7 +33,7 @@ dependencies = [
     "python-copasi",
     "compose-api-client==0.1.4",
     "httpx>=0.28.1",
-    "pbsim-common",
+    "pbsim-common>=0.1.0",
 ]
 
 [project.urls]
@@ -166,4 +166,4 @@ source = ["pbest"]
 [tool.uv.sources]
 # biocompose = { git = "https://github.com/vivarium-collective/biocompose", rev = "numerical-types" }
 # biocompose =  { path = "../biocompose", editable = true }
-pbsim_common =  { path = "../pb_components/pbsim_common", editable = true }
+# pbsim_common =  { path = "../pb_components/pbsim_common", editable = true }

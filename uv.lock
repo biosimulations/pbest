@@ -1339,7 +1339,7 @@ requires-dist = [
     { name = "matplotlib" },
     { name = "numpy", specifier = ">=2.3.4" },
     { name = "pandas", specifier = ">=2.3.3" },
-    { name = "pbsim-common", editable = "../pb_components/pbsim_common" },
+    { name = "pbsim-common", specifier = ">=0.1.0" },
     { name = "process-bigraph", specifier = ">=1.0.5" },
     { name = "pydantic", specifier = ">=2.12.3" },
     { name = "python-copasi" },
@@ -1367,7 +1367,7 @@ dev = [
 [[package]]
 name = "pbsim-common"
 version = "0.1.0"
-source = { editable = "../pb_components/pbsim_common" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bigraph-schema" },
     { name = "copasi-basico" },
@@ -1378,34 +1378,9 @@ dependencies = [
     { name = "python-copasi" },
     { name = "tellurium" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "bigraph-schema", specifier = ">=1.0.1" },
-    { name = "copasi-basico" },
-    { name = "libroadrunner" },
-    { name = "numpy", specifier = ">=2.3.4" },
-    { name = "pandas", specifier = ">=2.3.3" },
-    { name = "process-bigraph", specifier = ">=1.0.5" },
-    { name = "python-copasi" },
-    { name = "tellurium", specifier = ">=2.2.11.1" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "deptry", specifier = ">=0.23.0" },
-    { name = "docker" },
-    { name = "mkdocs", specifier = ">=1.4.2" },
-    { name = "mkdocs-material", specifier = ">=8.5.10" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.26.1" },
-    { name = "mypy", specifier = ">=0.991" },
-    { name = "pandas-stubs" },
-    { name = "pre-commit", specifier = ">=2.20.0" },
-    { name = "pytest", specifier = ">=7.2.0" },
-    { name = "pytest-asyncio", specifier = ">=1.0.0,<2" },
-    { name = "pytest-cov", specifier = ">=4.0.0" },
-    { name = "ruff", specifier = ">=0.11.5" },
-    { name = "tox-uv", specifier = ">=1.11.3" },
+sdist = { url = "https://files.pythonhosted.org/packages/c4/7b/00fc59488b821f482377b148811f35220a9458724dc713a513aefb36d5f5/pbsim_common-0.1.0.tar.gz", hash = "sha256:11766bc833d837cfd1b671787a7eeec78abf200634da88fda2d0a1e96cec2caa", size = 180023, upload-time = "2026-02-25T18:26:25.006Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/34/e48c411fd1fa5bb8aae4bd45d4a7eb93dbf97bca55cb27ca5c148d516633/pbsim_common-0.1.0-py3-none-any.whl", hash = "sha256:33b6f32fe63b827e377876be89bdf85304c4ac37d037f023e4283322e95899f4", size = 9946, upload-time = "2026-02-25T18:26:26.454Z" },
 ]
 
 [[package]]
