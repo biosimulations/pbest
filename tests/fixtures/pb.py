@@ -1,33 +1,18 @@
-import importlib.metadata
 from pathlib import Path
 from typing import Any
 
 import pytest
-from bigraph_schema import allocate_core
 from bigraph_schema.core import Core
-from pbsim_common.comparison import MSEComparison
-from pbsim_common.simulators import TelluriumUTCStep, CopasiUTCStep, TelluriumSteadyStateStep
 from process_bigraph.emitter import emitter_from_wires
 
 # from biocompose import standard_types
-from pbest import standard_types
+from pbest.globals import get_loaded_core
 from pbest.utils.builder import CompositeBuilder
 
 
 @pytest.fixture(scope="function")
 def fully_registered_core() -> Core:
-    core: Core = allocate_core()
-    manual = {
-        "pbsim_common.simulators.tellurium_process.TelluriumUTCStep": TelluriumUTCStep,
-        "pbsim_common.simulators.tellurium_process.TelluriumSteadyStateStep": TelluriumSteadyStateStep,
-        "pbsim_common.simulators.copasi_process.CopasiUTCStep": CopasiUTCStep,
-        "pbsim_common.comparison.MSEComparison": MSEComparison
-    }
-    for k, i in standard_types.items():
-        core.register_type(k, i)
-    for k, i in manual.items():
-        core.register_link(k, i)
-    return core
+    return get_loaded_core()
 
 
 @pytest.fixture(scope="function")

@@ -19,15 +19,7 @@ def set_logging_config(level: str) -> None:
 def get_loaded_core() -> Core:
     global loaded_core
     if loaded_core is None:
-        manual = {
-            "pbsim_common.simulators.tellurium_process.TelluriumUTCStep": TelluriumUTCStep,
-            "pbsim_common.simulators.tellurium_process.TelluriumSteadyStateStep": TelluriumSteadyStateStep,
-            "pbsim_common.simulators.copasi_process.CopasiUTCStep": CopasiUTCStep,
-            "pbsim_common.comparison.MSEComparison": MSEComparison
-        }
         loaded_core = allocate_core()
         for k, i in standard_types.items():
             loaded_core.register_type(k, i)
-        for k, i in manual.items():
-            loaded_core.register_link(k, i)
     return loaded_core
