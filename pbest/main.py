@@ -100,6 +100,7 @@ def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dic
 def run_experiment(prog_args: ExecutionProgramArguments) -> None:
     with tempfile.TemporaryDirectory() as tmp_dir:
         schema = get_pb_schema(prog_args, tmp_dir)
+        logger.debug(f"PBG schema: {schema}")
         core = get_loaded_core()
         prepared_composite = Composite(core=core, config=schema)
 
