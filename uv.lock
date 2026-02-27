@@ -1339,7 +1339,7 @@ requires-dist = [
     { name = "matplotlib" },
     { name = "numpy", specifier = ">=2.3.4" },
     { name = "pandas", specifier = ">=2.3.3" },
-    { name = "pbsim-common", specifier = ">=0.1.0" },
+    { name = "pbsim-common", specifier = ">=0.1.1" },
     { name = "process-bigraph", specifier = ">=1.0.5" },
     { name = "pydantic", specifier = ">=2.12.3" },
     { name = "python-copasi" },
@@ -1366,7 +1366,7 @@ dev = [
 
 [[package]]
 name = "pbsim-common"
-version = "0.1.0"
+version = "0.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bigraph-schema" },
@@ -1378,9 +1378,9 @@ dependencies = [
     { name = "python-copasi" },
     { name = "tellurium" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/7b/00fc59488b821f482377b148811f35220a9458724dc713a513aefb36d5f5/pbsim_common-0.1.0.tar.gz", hash = "sha256:11766bc833d837cfd1b671787a7eeec78abf200634da88fda2d0a1e96cec2caa", size = 180023, upload-time = "2026-02-25T18:26:25.006Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/66/20/b6dd35278f791af320cce0eb41300bb4cb27dc46f64689dd0b6efce9d415/pbsim_common-0.1.1.tar.gz", hash = "sha256:90a9b9eb84d10319678e4125c3da3a1fc45b2cebb94a9b6ab99b09d8b0ea053a", size = 180037, upload-time = "2026-02-27T16:13:20.679Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/34/e48c411fd1fa5bb8aae4bd45d4a7eb93dbf97bca55cb27ca5c148d516633/pbsim_common-0.1.0-py3-none-any.whl", hash = "sha256:33b6f32fe63b827e377876be89bdf85304c4ac37d037f023e4283322e95899f4", size = 9946, upload-time = "2026-02-25T18:26:26.454Z" },
+    { url = "https://files.pythonhosted.org/packages/c2/46/6f35877058d2b20aeac72887866bfc581d11b2efdb39498a0a624b9863b8/pbsim_common-0.1.1-py3-none-any.whl", hash = "sha256:01211562f7507a38a84746b19ebf14e59522892e18bfb337cdcc5d29bb86f3f0", size = 9971, upload-time = "2026-02-27T16:13:21.574Z" },
 ]
 
 [[package]]
