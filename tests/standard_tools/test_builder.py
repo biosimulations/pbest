@@ -1,7 +1,6 @@
-import os
 import random
 
-from bigraph_schema import allocate_core, Core
+from bigraph_schema import Core, allocate_core
 from process_bigraph import Composite
 
 from pbest.globals import get_loaded_core

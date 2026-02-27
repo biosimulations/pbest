@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any
 
 from bigraph_schema import Core
-from process_bigraph import Composite
 
 from pbest.main import run_experiment
 from pbest.utils.input_types import ExecutionProgramArguments

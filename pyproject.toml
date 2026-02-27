@@ -21,7 +21,7 @@ dependencies = [
     "pandas>=2.3.3",
     # "polars>=1.35.2",
     "process-bigraph>=1.0.5",
-    "bigraph-schema>=1.0.1",
+    "bigraph-schema>=1.0.4",
     "pydantic>=2.12.3",
     # "python-libsbml>=5.20.5",
     "spython>=0.3.14",
@@ -97,6 +97,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "compose_api_client.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "bigraph_schema.*"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
