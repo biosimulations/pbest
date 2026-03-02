@@ -103,7 +103,7 @@ wheels = [
 
 [[package]]
 name = "bigraph-schema"
-version = "1.0.4"
+version = "1.0.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fire" },
@@ -119,9 +119,9 @@ dependencies = [
     { name = "setuptools" },
     { name = "twine" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/72/8e/7f308a79b0cf33b4f5a4e74c6321578e49a59fb6e4b59ab7062edf43ba44/bigraph_schema-1.0.4.tar.gz", hash = "sha256:60f746f82161adb8e09f40150bfb8f6e7052da84d38c02bd5589f8775587cbcd", size = 40003, upload-time = "2026-02-27T21:22:27.847Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/c3/62d7fdbede3d68dc0cc3650743c54e3eeedf9218fe2bf2cec6cb0689320e/bigraph_schema-1.0.5.tar.gz", hash = "sha256:41d00bb59148ec02ad5165ddcefff760721dc37df2728a215e09046b2d840edc", size = 40054, upload-time = "2026-02-27T22:07:19.766Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b9/db/371efd202f51315b3498548b3cc0c996bae3db8471a59c0e29603e3fa2a0/bigraph_schema-1.0.4-py3-none-any.whl", hash = "sha256:fb1fdf6ba1dac13175395ef993114901ee84f0cebe94da55727bdd3b9163451c", size = 47980, upload-time = "2026-02-27T21:22:26.871Z" },
+    { url = "https://files.pythonhosted.org/packages/05/90/7c9028d364cc3c7d8fb377313e92a6a4cda0860787565d33f2276674e3dd/bigraph_schema-1.0.5-py3-none-any.whl", hash = "sha256:3f2c07a9eba5a0e50e7e2b2d3d391dc5021c53d2bb989436251d9c9d8bd7862a", size = 48060, upload-time = "2026-02-27T22:07:18.712Z" },
 ]
 
 [[package]]
@@ -1330,7 +1330,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "bigraph-schema", specifier = ">=1.0.4" },
+    { name = "bigraph-schema", specifier = ">=1.0.5" },
     { name = "compose-api-client", specifier = "==0.1.4" },
     { name = "copasi-basico" },
     { name = "httpx", specifier = ">=0.28.1" },
@@ -1339,7 +1339,7 @@ requires-dist = [
     { name = "matplotlib" },
     { name = "numpy", specifier = ">=2.3.4" },
     { name = "pandas", specifier = ">=2.3.3" },
-    { name = "pbsim-common", specifier = ">=0.1.1" },
+    { name = "pbsim-common", specifier = ">=0.1.2" },
     { name = "process-bigraph", specifier = ">=1.0.5" },
     { name = "pydantic", specifier = ">=2.12.3" },
     { name = "python-copasi" },
@@ -1366,7 +1366,7 @@ dev = [
 
 [[package]]
 name = "pbsim-common"
-version = "0.1.1"
+version = "0.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bigraph-schema" },
@@ -1378,9 +1378,9 @@ dependencies = [
     { name = "python-copasi" },
     { name = "tellurium" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/66/20/b6dd35278f791af320cce0eb41300bb4cb27dc46f64689dd0b6efce9d415/pbsim_common-0.1.1.tar.gz", hash = "sha256:90a9b9eb84d10319678e4125c3da3a1fc45b2cebb94a9b6ab99b09d8b0ea053a", size = 180037, upload-time = "2026-02-27T16:13:20.679Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d3/72/f7214c3350105b5085402edd22d3f21b90e6469b165c25da5d7f2e90cfcd/pbsim_common-0.1.2.tar.gz", hash = "sha256:b498cd352c039d970b20127ff24345aa39491f6d70d708e02cc5e5bfe140dc50", size = 180060, upload-time = "2026-02-27T19:08:04.011Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c2/46/6f35877058d2b20aeac72887866bfc581d11b2efdb39498a0a624b9863b8/pbsim_common-0.1.1-py3-none-any.whl", hash = "sha256:01211562f7507a38a84746b19ebf14e59522892e18bfb337cdcc5d29bb86f3f0", size = 9971, upload-time = "2026-02-27T16:13:21.574Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/46/4cc68db4658f8c1697d8993cca92c1f2c6c90a50d0d4d4d08fef4134a67d/pbsim_common-0.1.2-py3-none-any.whl", hash = "sha256:53f721ba7df82eca4227597a47fce6091a1dc62e8210c9eed5870fe4816c8030", size = 10139, upload-time = "2026-02-27T19:08:05.086Z" },
 ]
 
 [[package]]
