@@ -1296,19 +1296,12 @@ source = { editable = "." }
 dependencies = [
     { name = "bigraph-schema" },
     { name = "compose-api-client" },
-    { name = "copasi-basico" },
     { name = "httpx" },
     { name = "jinja2" },
-    { name = "libroadrunner" },
-    { name = "matplotlib" },
-    { name = "numpy" },
-    { name = "pandas" },
     { name = "pbsim-common" },
     { name = "process-bigraph" },
     { name = "pydantic" },
-    { name = "python-copasi" },
     { name = "spython" },
-    { name = "tellurium" },
 ]
 
 [package.dev-dependencies]
@@ -1332,19 +1325,12 @@ dev = [
 requires-dist = [
     { name = "bigraph-schema", specifier = ">=1.0.5" },
     { name = "compose-api-client", specifier = "==0.1.4" },
-    { name = "copasi-basico" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "libroadrunner" },
-    { name = "matplotlib" },
-    { name = "numpy", specifier = ">=2.3.4" },
-    { name = "pandas", specifier = ">=2.3.3" },
     { name = "pbsim-common", specifier = ">=0.1.2" },
     { name = "process-bigraph", specifier = ">=1.0.5" },
     { name = "pydantic", specifier = ">=2.12.3" },
-    { name = "python-copasi" },
     { name = "spython", specifier = ">=0.3.14" },
-    { name = "tellurium", specifier = ">=2.2.11.1" },
 ]
 
 [package.metadata.requires-dev]
