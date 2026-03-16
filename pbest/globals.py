@@ -1,31 +1,23 @@
 import logging
 
-from process_bigraph import ProcessTypes, generate_core
-
-from pbest import standard_types
+from bigraph_schema import Core
+from pbsim_common import standard_types
+from process_bigraph import allocate_core
 
 logger = logging.getLogger(__name__)
 
-loaded_core: ProcessTypes | None = None
+loaded_core: Core | None = None
 
 
 def set_logging_config(level: str) -> None:
     logging.basicConfig(level=level)
 
 
-def get_loaded_core() -> ProcessTypes:
+def get_loaded_core() -> Core:
     global loaded_core
     if loaded_core is None:
-        loaded_core = generate_core()
-        logger.debug(f"Process registry: {loaded_core.process_registry.registry}")
+        loaded_core = allocate_core()
         for k, i in standard_types.items():
-            loaded_core.register(k, i)
-    return loaded_core
-
-
-def reload_core() -> ProcessTypes:
-    global loaded_core
-    loaded_core = generate_core()
-    for k, i in standard_types.items():
-        loaded_core.register(k, i)
+            loaded_core.register_type(k, i)
+    logger.debug(f"Link registry in use: {loaded_core.link_registry}")
     return loaded_core

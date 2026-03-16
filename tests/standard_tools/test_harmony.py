@@ -11,12 +11,13 @@ import pytest
 from pbest.main import run_remote_experiment
 from pbest.utils.builder import CompositeBuilder
 from pbest.utils.input_types import ExecutionProgramArguments
+from tests.fixtures.utils import root_dir_path
 
 
 def comparison_builder(builder: CompositeBuilder) -> None:
-    model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
+    model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
     builder.add_step(
-        address="local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep",
+        address="local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
         config={
             "model_source": model_path,
             "time": 10,
@@ -26,7 +27,7 @@ def comparison_builder(builder: CompositeBuilder) -> None:
         outputs={"result": ["results", "tellurium"]},
     )
     builder.add_step(
-        address="local:pbest.registry.simulators.copasi_process.CopasiUTCStep",
+        address="local:pbsim_common.simulators.copasi_process.CopasiUTCStep",
         config={
             "model_source": model_path,
             "time": 10,
@@ -85,12 +86,12 @@ def perform_parameter_scan_comparison(results: dict[Any, Any]):
 
 def create_parameter_scan(
     fully_registered_builder: CompositeBuilder,
-    model_path: str = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml",
+    model_path: str = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml",
 ) -> None:
     fully_registered_builder.add_parameter_scan(
-        step_address="local:pbest.registry.simulators.tellurium_process.TelluriumSteadyStateStep",
+        step_address="local:pbsim_common.simulators.tellurium_process.TelluriumSteadyStateStep",
         step_config={"model_source": model_path},
-        input_mappings={"species_concentrations": ["species_concentrations"], "counts": ["species_counts"]},
+        input_mappings={"species_concentrations": ["species_concentrations"]},
         config_values={},
         state_values={"species_concentrations": {"PX": [1, 30000], "PY": [1, 2000], "PZ": [1, 5000]}},
     )
@@ -107,7 +108,7 @@ async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder)
     create_parameter_scan(fully_registered_builder, model_path="biomodel.xml")
     with tempfile.TemporaryDirectory() as temp_dir:
         input_path = os.path.join(temp_dir, "input.pbif")
-        model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
+        model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
         with open(input_path, "w") as input_file:
             json.dump({"state": fully_registered_builder.state}, input_file)
         omex_path = os.path.join(temp_dir, "input.omex")

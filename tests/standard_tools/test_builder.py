@@ -1,16 +1,17 @@
-import os
 import random
 
-from process_bigraph import Composite, generate_core
+from bigraph_schema import Core, allocate_core
+from process_bigraph import Composite
 
 from pbest.globals import get_loaded_core
 from pbest.utils.builder import CompositeBuilder
+from tests.fixtures.utils import root_dir_path
 
 
 def test_parameter_scan_composite_generation():
-    core = generate_core()
+    core = allocate_core()
     builder = CompositeBuilder(core=core)
-    step_name = "local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep"
+    step_name = "local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     times = [1, 10, 100]
     px = [0, 1, 2]
     py = [3, 4, 5]
@@ -58,16 +59,16 @@ def test_parameter_scan_composite_generation():
         )
 
 
-def test_parameter_scan():
+def test_parameter_scan(fully_registered_core: Core):
     core = get_loaded_core()
-    builder = CompositeBuilder(core=core)
-    model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
+    builder = CompositeBuilder(core=fully_registered_core)
+    model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
     px = [0, 1]
     py = [3]
     pz = [7, 9, 10]
     times = [1, 10]
     builder.add_parameter_scan(
-        step_address="local:pbest.registry.simulators.tellurium_process.TelluriumUTCStep",
+        step_address="local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
         step_config={
             "model_source": model_path,
             "time": 10,
@@ -81,7 +82,7 @@ def test_parameter_scan():
     )
     param_composite = builder.build()
     param_state = param_composite.state["parameter_scan_0"]
-    step_name = "pbest.registry.simulators.tellurium_process.TelluriumUTCStep"
+    step_name = "pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     result_set = [
         {"results": param_state["results"][k], "step": param_state[k], "inputs": param_state["inputs"][k]}
         for k in param_state

@@ -13,7 +13,11 @@ import pytest
 from docker.errors import ContainerError
 
 from pbest.containerization.container_constructor import formulate_dockerfile_for_necessary_env, get_experiment_deps
-from pbest.utils.input_types import ContainerizationEngine, ContainerizationProgramArguments, ContainerizationTypes
+from pbest.utils.input_types import (
+    ContainerizationEngine,
+    ContainerizationProgramArguments,
+    ContainerizationTypes,
+)
 from tests.fixtures.pb import _get_model_path
 from tests.fixtures.utils import is_docker_present
 from tests.standard_tools.test_comparison import comparison_result_dict_test
@@ -81,7 +85,7 @@ def build_image_and_run_experiment(
         if show_logs:
             print(logs.decode("utf-8"))
     except ContainerError as e:
-        print(e.stderr)
+        print(e.stderr.decode("utf-8"))
 
 
 @pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
@@ -102,6 +106,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
             f.write(comparison_doc_str)
 
         build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path)
+        # run_experiment(prog_args=ExecutionProgramArguments(input_file_path=str(comparison_pbg_path), interval=1, output_directory=Path(output_dir)))
 
         result_file = next(k for k in os.listdir(output_dir) if (".pbg" in k) and ("state" in k))
         with open(os.path.join(output_dir, result_file)) as f:

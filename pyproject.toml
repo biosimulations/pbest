@@ -5,7 +5,7 @@ description = "BioSim Registry is a project focused on delivering high quality p
 authors = [{ name = "Center for Reproducable Biological Modeling", email = "evalencia@uchc.edu" }]
 readme = "README.md"
 keywords = ['python']
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.12,<3.13"
 classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
@@ -17,22 +17,23 @@ classifiers = [
 ]
 dependencies = [
     "jinja2>=3.1.6",
-    "numpy>=2.3.4",
-    "pandas>=2.3.3",
+#    "numpy>=2.3.4",
+#    "pandas>=2.3.3",
     # "polars>=1.35.2",
-    "process-bigraph==0.0.51",
-    "bigraph-schema==0.0.77",
+    "process-bigraph>=1.0.5",
+    "bigraph-schema>=1.0.5",
     "pydantic>=2.12.3",
     # "python-libsbml>=5.20.5",
     "spython>=0.3.14",
-    "copasi-basico",
-    "tellurium>=2.2.11.1",
-    "libroadrunner",
-    "matplotlib",
+#    "copasi-basico",
+#    "tellurium>=2.2.11.1",
+#    "libroadrunner",
+#    "matplotlib",
     # "vivarium-interface>=0.0.5",
-    "python-copasi",
+#    "python-copasi",
     "compose-api-client==0.1.4",
     "httpx>=0.28.1",
+    "pbsim-common>=0.1.2",
 ]
 
 [project.urls]
@@ -96,6 +97,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "compose_api_client.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "bigraph_schema.*"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
@@ -165,3 +170,5 @@ source = ["pbest"]
 [tool.uv.sources]
 # biocompose = { git = "https://github.com/vivarium-collective/biocompose", rev = "numerical-types" }
 # biocompose =  { path = "../biocompose", editable = true }
+#bigraph_schema =  { path = "../bigraph-schema", editable = true }
+#pbsim_common =  { path = "../pb_components/pbsim_common", editable = true }

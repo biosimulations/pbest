@@ -2,7 +2,8 @@ import copy
 from enum import Enum
 from typing import Any, Optional
 
-from process_bigraph import Composite, Process, ProcessTypes, Step
+from bigraph_schema.core import Core
+from process_bigraph import Composite, Process, Step
 
 
 class StepBuilder(Step):
@@ -32,8 +33,8 @@ class CompositeBuilder:
             self.values: list[Any] = values
             self.composite_type: CompositeBuilder.CompositeType = composite_type
 
-    def __init__(self, core: ProcessTypes):
-        self.core: ProcessTypes = core
+    def __init__(self, core: Core):
+        self.core: Core = core
         self.step_number: int = 0
         self.state: dict[str, Any] = {}
 
@@ -58,7 +59,7 @@ class CompositeBuilder:
         comparison_step_key = self._allocate_step_key("comparison_step")
         self.state[comparison_step_key] = {
             "_type": "step",
-            "address": "local:pbest.registry.comparison.MSEComparison",
+            "address": "local:pbsim_common.comparison.MSEComparison",
             "config": {},
             "inputs": {
                 "results": store_with_values,
