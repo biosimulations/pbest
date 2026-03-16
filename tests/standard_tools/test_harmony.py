@@ -108,7 +108,7 @@ async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder)
     create_parameter_scan(fully_registered_builder, model_path="biomodel.xml")
     with tempfile.TemporaryDirectory() as temp_dir:
         input_path = os.path.join(temp_dir, "input.pbif")
-        model_path = f"{os.getcwd()}/tests/resources/BIOMD0000000012_url.xml"
+        model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
         with open(input_path, "w") as input_file:
             json.dump({"state": fully_registered_builder.state}, input_file)
         omex_path = os.path.join(temp_dir, "input.omex")

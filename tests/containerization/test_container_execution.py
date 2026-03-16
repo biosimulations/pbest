@@ -105,7 +105,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
             comparison_doc_str = comparison_doc_str.replace(_get_model_path(), f"/experiment/input/{model_name}")
             f.write(comparison_doc_str)
 
-        build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path, cache_project=True)
+        build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path)
         # run_experiment(prog_args=ExecutionProgramArguments(input_file_path=str(comparison_pbg_path), interval=1, output_directory=Path(output_dir)))
 
         result_file = next(k for k in os.listdir(output_dir) if (".pbg" in k) and ("state" in k))
