@@ -56,17 +56,19 @@ def formulate_dockerfile_for_necessary_env(
 
     pypi_deps = experiment_deps.get_pypi_dependencies()
     for p in range(len(pypi_deps)):
+        install_line = f"{pypi_deps[p].get_name() + ('' if pypi_deps[p].any_version_allowed() else f'=={pypi_deps[p].version}')}"
         if p == 0:
             deps_install_command += (
-                f"RUN micromamba run -p {micromamba_env_path} python3 -m pip install '{pypi_deps[p].get_name()}'"
+                f"RUN micromamba run -p {micromamba_env_path} python3 -m pip install '{install_line}'"
             )
         elif p != len(pypi_deps) - 1:
-            deps_install_command += f" '{pypi_deps[p].get_name()}'"
+            deps_install_command += f" '{install_line}'"
         else:
-            deps_install_command += f" '{pypi_deps[p].get_name()}'\n"
+            deps_install_command += f" '{install_line}'\n"
     for c in experiment_deps.get_conda_dependencies():
+        install_line = f"{c.get_name() + ('' if c.any_version_allowed() else f'={c.version}')}"
         deps_install_command += (
-            f"RUN micromamba install -c conda-forge -p {micromamba_env_path} {c.get_name()} python=3.12 --yes\n"
+            f"RUN micromamba install -c conda-forge -p {micromamba_env_path} {install_line} python=3.12 --yes\n"
         )
 
     with open(__file__.rsplit(os.sep, maxsplit=1)[0] + f"{os.sep}generic_container.jinja") as f:
