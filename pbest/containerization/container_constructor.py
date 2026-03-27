@@ -21,21 +21,25 @@ micromamba_env_path = "/micromamba_env/runtime_env"
 
 
 def get_experiment_deps() -> ExperimentPrimaryDependencies:
-    pypi_deps = ["cobra", "tellurium", "numpy", "matplotlib", "scipy", "pb_multiscale_actin"]
+    pypi_deps = [{"name": "python-copasi", "version": "4.46.300"}, {"name": "tellurium", "version": "2.2.11.1"},
+                 {"name": "numpy", "version": ""}, {"name": "matplotlib", "version": ""}, {"name": "scipy", "version": ""},
+                 {"name": "pb_multiscale_actin", "version": "1.3.1"}]
     return ExperimentPrimaryDependencies(
         pypi_dependencies=[
             ExperimentDependency(
-                dependency_name=name,
-                url_reference=DependencyTypes.get_pypi_url(name),
+                dependency_name=package["name"],
+                url_reference=DependencyTypes.get_pypi_url(package["name"]),
                 dependency_type=DependencyTypes.PYPI,
+                version=package['version']
             )
-            for name in pypi_deps
+            for package in pypi_deps
         ],
         conda_dependencies=[
             ExperimentDependency(
                 dependency_name="readdy",
                 url_reference=HttpUrl("https://github.com/readdy/readdy"),
                 dependency_type=DependencyTypes.CONDA,
+                version="2.0.13"
             )
         ],
     )
