@@ -107,13 +107,13 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder):
 async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder):
     create_parameter_scan(fully_registered_builder, model_path="biomodel.xml")
     with tempfile.TemporaryDirectory() as temp_dir:
-        input_path = os.path.join(temp_dir, "input.pbif")
+        input_path = os.path.join(temp_dir, "input.pbg")
         model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
         with open(input_path, "w") as input_file:
             json.dump({"state": fully_registered_builder.state}, input_file)
         omex_path = os.path.join(temp_dir, "input.omex")
         with zipfile.ZipFile(omex_path, "w") as omex_input:
-            omex_input.write(input_path, arcname="input.pbif")
+            omex_input.write(input_path, arcname="input.pbg")
             omex_input.write(model_path, arcname="biomodel.xml")
 
         await run_remote_experiment(
@@ -123,7 +123,7 @@ async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder)
         with zipfile.ZipFile(os.path.join(temp_dir, "output.zip")) as output:
             output.extractall(temp_dir)
 
-        result_pbg = next(k for k in os.listdir(temp_dir) if ".pbif" in k)
+        result_pbg = next(k for k in os.listdir(temp_dir) if ".pbg" in k)
 
         with open(os.path.join(temp_dir, result_pbg)) as result_file:
             json_data = json.load(result_file)
