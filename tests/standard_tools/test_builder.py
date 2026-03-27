@@ -84,7 +84,8 @@ def test_parameter_scan(fully_registered_core: Core):
     param_state = param_composite.state["parameter_scan_0"]
     step_name = "pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     result_set = [
-        {"results": param_state["results"][k], "step": param_state[k], "inputs": param_state["inputs"][k]}
+        # TODO: Figure out why state held in composite disappear after first run (inputs goes from populated to empty dict).
+        {"results": param_state["results"][k], "step": param_state[k], "inputs": builder.state["parameter_scan_0"]["inputs"][k]}
         for k in param_state
         if "TelluriumUTCStep" in k
     ]

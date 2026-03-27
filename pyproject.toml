@@ -31,7 +31,7 @@ dependencies = [
 #    "matplotlib",
     # "vivarium-interface>=0.0.5",
 #    "python-copasi",
-    "compose-api-client==0.1.4",
+    "compose-api-client==0.1.8",
     "httpx>=0.28.1",
     "pbsim-common>=0.1.2",
 ]

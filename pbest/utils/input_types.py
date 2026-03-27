@@ -41,6 +41,9 @@ class ExperimentDependency:
     def get_name(self) -> str:
         return self.dependency_name
 
+    def any_version_allowed(self) -> bool:
+        return self.version == ""
+
 
 @dataclass(frozen=True)
 class ExperimentPrimaryDependencies:
