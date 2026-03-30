@@ -89,8 +89,8 @@ def create_parameter_scan(
     model_path: str = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml",
 ) -> None:
     fully_registered_builder.add_parameter_scan(
-        step_address="local:pbsim_common.simulators.tellurium_process.TelluriumSteadyStateStep",
-        step_config={"model_source": model_path},
+        address="local:pbsim_common.simulators.tellurium_process.TelluriumSteadyStateStep",
+        config={"model_source": model_path},
         input_mappings={"species_concentrations": ["species_concentrations"]},
         config_values={},
         state_values={"species_concentrations": {"PX": [1, 30000], "PY": [1, 2000], "PZ": [1, 5000]}},

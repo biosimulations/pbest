@@ -39,6 +39,19 @@ class CompositeBuilder:
         }
         return self
 
+    def add_process(
+        self, address: str, config: dict[str, str | int], inputs: dict[str, Any], outputs: dict[str, Any]
+    ) -> "CompositeBuilder":
+        new_step_key = self._allocate_step_key(address)
+        self.state[new_step_key] = {
+            "_type": "process",
+            "address": address,
+            "config": config,
+            "inputs": inputs,
+            "outputs": outputs,
+        }
+        return self
+
     def add_comparison_step(self, comparison_name: str, store_with_values: list[str]) -> "CompositeBuilder":
         comparison_step_key = self._allocate_step_key("comparison_step")
         self.state[comparison_step_key] = {
@@ -74,8 +87,8 @@ class CompositeBuilder:
 
     def add_parameter_scan(
         self,
-        step_address: str,
-        step_config: dict[Any, Any],
+        address: str,
+        config: dict[Any, Any],
         input_mappings: dict[str, list[str]],
         is_step: bool = True,
         config_values: Optional[dict[str, Any]] = None,
@@ -117,7 +130,7 @@ class CompositeBuilder:
                 if len(all_paths) > 1:
                     combinatorics(current_step, all_paths[:-1])
                 else:
-                    step_key = self._allocate_step_key(step_address.split(":")[1])
+                    step_key = self._allocate_step_key(address.split(":")[1])
                     current_step[edge_type]["outputs"]["result"] = ["results", step_key]
                     for k in current_step[edge_type]["inputs"]:
                         current_step[edge_type]["inputs"][k] = ["inputs", step_key]
@@ -129,8 +142,8 @@ class CompositeBuilder:
                 "state": {},
                 edge_type: {
                     "_type": edge_type,
-                    "address": step_address,
-                    "config": step_config,
+                    "address": address,
+                    "config": config,
                     "inputs": input_mappings,
                     "outputs": {"result": {}},
                 },

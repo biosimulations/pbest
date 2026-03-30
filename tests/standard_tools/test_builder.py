@@ -16,8 +16,8 @@ def test_parameter_scan_composite_generation():
     py = [3, 4, 5]
     pz = [6, 7, 8]
     builder.add_parameter_scan(
-        step_address=step_name,
-        step_config={
+        address=step_name,
+        config={
             "model_source": "any_path",
             "time": 10,
             "n_points": 10,
@@ -67,8 +67,8 @@ def test_parameter_scan(fully_registered_core: Core):
     pz = [7, 9, 10]
     times = [1, 10]
     builder.add_parameter_scan(
-        step_address="local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
-        step_config={
+        address="local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
+        config={
             "model_source": model_path,
             "time": 10,
             "n_points": 10,
