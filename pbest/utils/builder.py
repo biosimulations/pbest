@@ -76,9 +76,11 @@ class CompositeBuilder:
         step_address: str,
         step_config: dict[Any, Any],
         input_mappings: dict[str, list[str]],
+        is_step: bool = True,
         config_values: Optional[dict[str, Any]] = None,
         state_values: Optional[dict[str, Any]] = None,
     ) -> None:
+        edge_type = "step" if is_step else "process"
         config_values = config_values or {}
         state_values = state_values or {}
         param_step_key = self._allocate_step_key("parameter_scan")
@@ -97,7 +99,7 @@ class CompositeBuilder:
                 sub_struct = None
                 match path_of_focus.composite_type:
                     case CompositeBuilder.CompositeType.CONFIG:
-                        sub_struct = current_step["step"]["config"]
+                        sub_struct = current_step[edge_type]["config"]
                     case CompositeBuilder.CompositeType.STATE:
                         sub_struct = current_step["state"]
 
@@ -115,17 +117,17 @@ class CompositeBuilder:
                     combinatorics(current_step, all_paths[:-1])
                 else:
                     step_key = self._allocate_step_key(step_address.split(":")[1])
-                    current_step["step"]["outputs"]["result"] = ["results", step_key]
-                    for k in current_step["step"]["inputs"]:
-                        current_step["step"]["inputs"][k] = ["inputs", step_key]
+                    current_step[edge_type]["outputs"]["result"] = ["results", step_key]
+                    for k in current_step[edge_type]["inputs"]:
+                        current_step[edge_type]["inputs"][k] = ["inputs", step_key]
                     self.state[param_step_key]["inputs"][step_key] = copy.deepcopy(current_step["state"])
-                    self.state[param_step_key][step_key] = copy.deepcopy(current_step["step"])
+                    self.state[param_step_key][step_key] = copy.deepcopy(current_step[edge_type])
 
         combinatorics(
             {
                 "state": {},
-                "step": {
-                    "_type": "step",
+                edge_type: {
+                    "_type": edge_type,
                     "address": step_address,
                     "config": step_config,
                     "inputs": input_mappings,
