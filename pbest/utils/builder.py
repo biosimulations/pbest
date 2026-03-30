@@ -2,7 +2,7 @@ import copy
 from enum import Enum
 from typing import Any, Optional
 
-from bigraph_schema.core import Core
+from bigraph_schema import Core
 from process_bigraph import Composite
 
 
@@ -28,7 +28,7 @@ class CompositeBuilder:
 
     def add_step(
         self, address: str, config: dict[str, str | int], inputs: dict[str, Any], outputs: dict[str, Any]
-    ) -> None:
+    ) -> "CompositeBuilder":
         new_step_key = self._allocate_step_key(address)
         self.state[new_step_key] = {
             "_type": "step",
@@ -37,8 +37,9 @@ class CompositeBuilder:
             "inputs": inputs,
             "outputs": outputs,
         }
+        return self
 
-    def add_comparison_step(self, comparison_name: str, store_with_values: list[str]) -> None:
+    def add_comparison_step(self, comparison_name: str, store_with_values: list[str]) -> "CompositeBuilder":
         comparison_step_key = self._allocate_step_key("comparison_step")
         self.state[comparison_step_key] = {
             "_type": "step",
@@ -51,6 +52,7 @@ class CompositeBuilder:
                 "comparison_result": ["comparison_results", comparison_name],
             },
         }
+        return self
 
     def _deconstruct_dictionary(
         self, base_path: list[str], dict_values: dict[str, Any], composite_type: CompositeType
@@ -78,7 +80,7 @@ class CompositeBuilder:
         is_step: bool = True,
         config_values: Optional[dict[str, Any]] = None,
         state_values: Optional[dict[str, Any]] = None,
-    ) -> None:
+    ) -> "CompositeBuilder":
         edge_type = "step" if is_step else "process"
         config_values = config_values or {}
         state_values = state_values or {}
@@ -135,6 +137,8 @@ class CompositeBuilder:
             },
             parameter_values,
         )
+        return self
+
     def get_composite(self) -> dict:
         return {"state": self.state}
 
