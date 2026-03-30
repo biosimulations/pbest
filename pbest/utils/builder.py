@@ -17,8 +17,7 @@ class CompositeBuilder:
             self.values: list[Any] = values
             self.composite_type: CompositeBuilder.CompositeType = composite_type
 
-    def __init__(self, core: Core):
-        self.core: Core = core
+    def __init__(self):
         self.step_number: int = 0
         self.state: dict[str, Any] = {}
 
@@ -136,7 +135,10 @@ class CompositeBuilder:
             },
             parameter_values,
         )
+    def get_composite(self) -> dict:
+        return {"state": self.state}
 
-    def build(self) -> Composite:
-        comp = Composite({"state": self.state}, core=self.core)
+    def run_composite(self, core: Core, interval: float, force_complete: bool = False) -> Composite:
+        comp = Composite({"state": self.state}, core=core)
+        comp.run(interval, force_complete)
         return comp
