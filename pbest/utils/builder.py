@@ -3,23 +3,7 @@ from enum import Enum
 from typing import Any, Optional
 
 from bigraph_schema.core import Core
-from process_bigraph import Composite, Process, Step
-
-
-class StepBuilder(Step):
-    pass
-
-
-class ComparisonProcess(Process):
-    pass
-
-
-class CompositeOverrides:
-    pass
-
-
-class CompositeParameterScan:
-    pass
+from process_bigraph import Composite
 
 
 class CompositeBuilder:
