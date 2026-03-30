@@ -9,8 +9,7 @@ from tests.fixtures.utils import root_dir_path
 
 
 def test_parameter_scan_composite_generation():
-    core = allocate_core()
-    builder = CompositeBuilder(core=core)
+    builder = CompositeBuilder()
     step_name = "local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     times = [1, 10, 100]
     px = [0, 1, 2]
@@ -61,7 +60,7 @@ def test_parameter_scan_composite_generation():
 
 def test_parameter_scan(fully_registered_core: Core):
     core = get_loaded_core()
-    builder = CompositeBuilder(core=fully_registered_core)
+    builder = CompositeBuilder()
     model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
     px = [0, 1]
     py = [3]
@@ -80,7 +79,7 @@ def test_parameter_scan(fully_registered_core: Core):
         },
         input_mappings={"concentrations": ["species_concentrations"], "counts": ["species_counts"]},
     )
-    param_composite = builder.build()
+    param_composite = builder.run_composite(fully_registered_core, 1)
     param_state = param_composite.state["parameter_scan_0"]
     step_name = "pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     result_set = [
