@@ -17,7 +17,7 @@ class CompositeBuilder:
             self.values: list[Any] = values
             self.composite_type: CompositeBuilder.CompositeType = composite_type
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.step_number: int = 0
         self.state: dict[str, Any] = {}
 

@@ -1,6 +1,6 @@
 import random
 
-from bigraph_schema import Core, allocate_core
+from bigraph_schema import Core
 from process_bigraph import Composite
 
 from pbest.globals import get_loaded_core
@@ -84,7 +84,11 @@ def test_parameter_scan(fully_registered_core: Core):
     step_name = "pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     result_set = [
         # TODO: Figure out why state held in composite disappear after first run (inputs goes from populated to empty dict).
-        {"results": param_state["results"][k], "step": param_state[k], "inputs": builder.state["parameter_scan_0"]["inputs"][k]}
+        {
+            "results": param_state["results"][k],
+            "step": param_state[k],
+            "inputs": builder.state["parameter_scan_0"]["inputs"][k],
+        }
         for k in param_state
         if "TelluriumUTCStep" in k
     ]
