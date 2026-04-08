@@ -1,6 +1,6 @@
 import random
 
-from bigraph_schema import Core, allocate_core
+from bigraph_schema import Core
 from process_bigraph import Composite
 
 from pbest.globals import get_loaded_core
@@ -9,16 +9,15 @@ from tests.fixtures.utils import root_dir_path
 
 
 def test_parameter_scan_composite_generation():
-    core = allocate_core()
-    builder = CompositeBuilder(core=core)
+    builder = CompositeBuilder()
     step_name = "local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     times = [1, 10, 100]
     px = [0, 1, 2]
     py = [3, 4, 5]
     pz = [6, 7, 8]
     builder.add_parameter_scan(
-        step_address=step_name,
-        step_config={
+        address=step_name,
+        config={
             "model_source": "any_path",
             "time": 10,
             "n_points": 10,
@@ -61,15 +60,15 @@ def test_parameter_scan_composite_generation():
 
 def test_parameter_scan(fully_registered_core: Core):
     core = get_loaded_core()
-    builder = CompositeBuilder(core=fully_registered_core)
+    builder = CompositeBuilder()
     model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
     px = [0, 1]
     py = [3]
     pz = [7, 9, 10]
     times = [1, 10]
     builder.add_parameter_scan(
-        step_address="local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
-        step_config={
+        address="local:pbsim_common.simulators.tellurium_process.TelluriumUTCStep",
+        config={
             "model_source": model_path,
             "time": 10,
             "n_points": 10,
@@ -80,12 +79,16 @@ def test_parameter_scan(fully_registered_core: Core):
         },
         input_mappings={"concentrations": ["species_concentrations"], "counts": ["species_counts"]},
     )
-    param_composite = builder.build()
+    param_composite = builder.run_composite(fully_registered_core, 1)
     param_state = param_composite.state["parameter_scan_0"]
     step_name = "pbsim_common.simulators.tellurium_process.TelluriumUTCStep"
     result_set = [
         # TODO: Figure out why state held in composite disappear after first run (inputs goes from populated to empty dict).
-        {"results": param_state["results"][k], "step": param_state[k], "inputs": builder.state["parameter_scan_0"]["inputs"][k]}
+        {
+            "results": param_state["results"][k],
+            "step": param_state[k],
+            "inputs": builder.state["parameter_scan_0"]["inputs"][k],
+        }
         for k in param_state
         if "TelluriumUTCStep" in k
     ]

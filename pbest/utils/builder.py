@@ -2,24 +2,8 @@ import copy
 from enum import Enum
 from typing import Any, Optional
 
-from bigraph_schema.core import Core
-from process_bigraph import Composite, Process, Step
-
-
-class StepBuilder(Step):
-    pass
-
-
-class ComparisonProcess(Process):
-    pass
-
-
-class CompositeOverrides:
-    pass
-
-
-class CompositeParameterScan:
-    pass
+from bigraph_schema import Core
+from process_bigraph import Composite
 
 
 class CompositeBuilder:
@@ -33,8 +17,7 @@ class CompositeBuilder:
             self.values: list[Any] = values
             self.composite_type: CompositeBuilder.CompositeType = composite_type
 
-    def __init__(self, core: Core):
-        self.core: Core = core
+    def __init__(self) -> None:
         self.step_number: int = 0
         self.state: dict[str, Any] = {}
 
@@ -45,7 +28,7 @@ class CompositeBuilder:
 
     def add_step(
         self, address: str, config: dict[str, str | int], inputs: dict[str, Any], outputs: dict[str, Any]
-    ) -> None:
+    ) -> "CompositeBuilder":
         new_step_key = self._allocate_step_key(address)
         self.state[new_step_key] = {
             "_type": "step",
@@ -54,8 +37,22 @@ class CompositeBuilder:
             "inputs": inputs,
             "outputs": outputs,
         }
+        return self
 
-    def add_comparison_step(self, comparison_name: str, store_with_values: list[str]) -> None:
+    def add_process(
+        self, address: str, config: dict[str, str | int], inputs: dict[str, Any], outputs: dict[str, Any]
+    ) -> "CompositeBuilder":
+        new_step_key = self._allocate_step_key(address)
+        self.state[new_step_key] = {
+            "_type": "process",
+            "address": address,
+            "config": config,
+            "inputs": inputs,
+            "outputs": outputs,
+        }
+        return self
+
+    def add_comparison_step(self, comparison_name: str, store_with_values: list[str]) -> "CompositeBuilder":
         comparison_step_key = self._allocate_step_key("comparison_step")
         self.state[comparison_step_key] = {
             "_type": "step",
@@ -68,6 +65,7 @@ class CompositeBuilder:
                 "comparison_result": ["comparison_results", comparison_name],
             },
         }
+        return self
 
     def _deconstruct_dictionary(
         self, base_path: list[str], dict_values: dict[str, Any], composite_type: CompositeType
@@ -89,12 +87,14 @@ class CompositeBuilder:
 
     def add_parameter_scan(
         self,
-        step_address: str,
-        step_config: dict[Any, Any],
+        address: str,
+        config: dict[Any, Any],
         input_mappings: dict[str, list[str]],
+        is_step: bool = True,
         config_values: Optional[dict[str, Any]] = None,
         state_values: Optional[dict[str, Any]] = None,
-    ) -> None:
+    ) -> "CompositeBuilder":
+        edge_type = "step" if is_step else "process"
         config_values = config_values or {}
         state_values = state_values or {}
         param_step_key = self._allocate_step_key("parameter_scan")
@@ -113,7 +113,7 @@ class CompositeBuilder:
                 sub_struct = None
                 match path_of_focus.composite_type:
                     case CompositeBuilder.CompositeType.CONFIG:
-                        sub_struct = current_step["step"]["config"]
+                        sub_struct = current_step[edge_type]["config"]
                     case CompositeBuilder.CompositeType.STATE:
                         sub_struct = current_step["state"]
 
@@ -130,27 +130,32 @@ class CompositeBuilder:
                 if len(all_paths) > 1:
                     combinatorics(current_step, all_paths[:-1])
                 else:
-                    step_key = self._allocate_step_key(step_address.split(":")[1])
-                    current_step["step"]["outputs"]["result"] = ["results", step_key]
-                    for k in current_step["step"]["inputs"]:
-                        current_step["step"]["inputs"][k] = ["inputs", step_key]
+                    step_key = self._allocate_step_key(address.split(":")[1])
+                    current_step[edge_type]["outputs"]["result"] = ["results", step_key]
+                    for k in current_step[edge_type]["inputs"]:
+                        current_step[edge_type]["inputs"][k] = ["inputs", step_key]
                     self.state[param_step_key]["inputs"][step_key] = copy.deepcopy(current_step["state"])
-                    self.state[param_step_key][step_key] = copy.deepcopy(current_step["step"])
+                    self.state[param_step_key][step_key] = copy.deepcopy(current_step[edge_type])
 
         combinatorics(
             {
                 "state": {},
-                "step": {
-                    "_type": "step",
-                    "address": step_address,
-                    "config": step_config,
+                edge_type: {
+                    "_type": edge_type,
+                    "address": address,
+                    "config": config,
                     "inputs": input_mappings,
                     "outputs": {"result": {}},
                 },
             },
             parameter_values,
         )
+        return self
 
-    def build(self) -> Composite:
-        comp = Composite({"state": self.state}, core=self.core)
+    def get_builder_state(self) -> dict:
+        return {"state": self.state}
+
+    def run_composite(self, core: Core, interval: float, force_complete: bool = False) -> Composite:
+        comp = Composite({"state": self.state}, core=core)
+        comp.run(interval, force_complete)
         return comp

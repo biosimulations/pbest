@@ -21,16 +21,21 @@ micromamba_env_path = "/micromamba_env/runtime_env"
 
 
 def get_experiment_deps() -> ExperimentPrimaryDependencies:
-    pypi_deps = [{"name": "python-copasi", "version": "4.46.300"}, {"name": "tellurium", "version": "2.2.11.1"},
-                 {"name": "numpy", "version": ""}, {"name": "matplotlib", "version": ""}, {"name": "scipy", "version": ""},
-                 {"name": "pb_multiscale_actin", "version": "1.3.1"}]
+    pypi_deps = [
+        {"name": "python-copasi", "version": "4.46.300"},
+        {"name": "tellurium", "version": "2.2.11.1"},
+        {"name": "numpy", "version": ""},
+        {"name": "matplotlib", "version": ""},
+        {"name": "scipy", "version": ""},
+        {"name": "pb_multiscale_actin", "version": "1.3.1"},
+    ]
     return ExperimentPrimaryDependencies(
         pypi_dependencies=[
             ExperimentDependency(
                 dependency_name=package["name"],
                 url_reference=DependencyTypes.get_pypi_url(package["name"]),
                 dependency_type=DependencyTypes.PYPI,
-                version=package['version']
+                version=package["version"],
             )
             for package in pypi_deps
         ],
@@ -39,7 +44,7 @@ def get_experiment_deps() -> ExperimentPrimaryDependencies:
                 dependency_name="readdy",
                 url_reference=HttpUrl("https://github.com/readdy/readdy"),
                 dependency_type=DependencyTypes.CONDA,
-                version="2.0.13"
+                version="2.0.13",
             )
         ],
     )
@@ -56,7 +61,9 @@ def formulate_dockerfile_for_necessary_env(
 
     pypi_deps = experiment_deps.get_pypi_dependencies()
     for p in range(len(pypi_deps)):
-        install_line = f"{pypi_deps[p].get_name() + ('' if pypi_deps[p].any_version_allowed() else f'=={pypi_deps[p].version}')}"
+        install_line = (
+            f"{pypi_deps[p].get_name() + ('' if pypi_deps[p].any_version_allowed() else f'=={pypi_deps[p].version}')}"
+        )
         if p == 0:
             deps_install_command += (
                 f"RUN micromamba run -p {micromamba_env_path} python3 -m pip install '{install_line}'"
