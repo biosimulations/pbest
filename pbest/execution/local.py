@@ -14,6 +14,7 @@ from pbest.utils.input_types import ExecutionProgramArguments
 
 logger = logging.getLogger(__name__)
 
+
 def replace_relative_pbif_paths(dic: dict[Any, Any], root_dir: str) -> None:
     for k, v in dic.items():
         if isinstance(v, dict):

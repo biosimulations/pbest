@@ -8,7 +8,7 @@ from typing import Any
 
 import pytest
 
-from pbest.main import run_remote_experiment
+from pbest import run_remote_experiment
 from pbest.utils.builder import CompositeBuilder
 from pbest.utils.input_types import ExecutionProgramArguments
 from tests.fixtures.utils import root_dir_path

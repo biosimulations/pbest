@@ -1,10 +1,10 @@
 import os
 
 import compose_api_client
-from compose_api_client import Client
 from compose_api_client.models import SimulationExperiment
 from compose_api_client.types import File
 from compose_api_client.utils import run_simulation_and_wait
+from httpx import Client
 
 from pbest.utils.input_types import ExecutionProgramArguments
 
@@ -30,4 +30,3 @@ async def run_remote_experiment(
         output_file.write(result.content)
 
     return sim_id
-
