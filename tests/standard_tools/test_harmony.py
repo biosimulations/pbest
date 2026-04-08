@@ -39,9 +39,9 @@ def comparison_builder(builder: CompositeBuilder) -> None:
     builder.add_comparison_step("copasi_tellurium", ["results"])
 
 
-def test_comparison_example(fully_registered_builder: CompositeBuilder):
+def test_comparison_example(fully_registered_builder: CompositeBuilder, fully_registered_core):
     comparison_builder(builder=fully_registered_builder)
-    compare_composite = fully_registered_builder.build()
+    compare_composite = fully_registered_builder.run_composite(core=fully_registered_core, interval=1)
     comparisons = compare_composite.state["comparison_results"]["copasi_tellurium"]["species_mse"]
     for simulator_of_focus in comparisons:
         for key, value in comparisons[simulator_of_focus].items():
@@ -97,9 +97,9 @@ def create_parameter_scan(
     )
 
 
-def test_parameter_scan(fully_registered_builder: CompositeBuilder):
+def test_parameter_scan(fully_registered_builder: CompositeBuilder, fully_registered_core):
     create_parameter_scan(fully_registered_builder)
-    comp = fully_registered_builder.build()
+    comp = fully_registered_builder.run_composite(core=fully_registered_core, interval=1)
     perform_parameter_scan_comparison(comp.state["parameter_scan_0"]["results"])
 
 

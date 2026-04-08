@@ -152,7 +152,7 @@ class CompositeBuilder:
         )
         return self
 
-    def get_composite(self) -> dict:
+    def get_builder_state(self) -> dict:
         return {"state": self.state}
 
     def run_composite(self, core: Core, interval: float, force_complete: bool = False) -> Composite:

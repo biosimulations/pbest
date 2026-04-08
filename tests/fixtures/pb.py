@@ -17,7 +17,7 @@ def fully_registered_core() -> Core:
 
 @pytest.fixture(scope="function")
 def fully_registered_builder(fully_registered_core) -> CompositeBuilder:
-    return CompositeBuilder(core=fully_registered_core)
+    return CompositeBuilder()
 
 
 def _get_model_path() -> str:
