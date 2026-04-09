@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 from pydantic import BaseModel, HttpUrl
 from pydantic.dataclasses import dataclass
@@ -62,19 +63,8 @@ class ContainerizationProgramArguments:
     """
     Create a container acting as an isolated environment for execution.
     """
-
     input_file_path: str
     containerization_type: ContainerizationTypes
     containerization_engine: ContainerizationEngine
     working_directory: Path
 
-
-@dataclass
-class ExecutionProgramArguments:
-    """
-    Provide information required to execute a process bi-graph.
-    """
-
-    input_file_path: str
-    interval: float
-    output_directory: Path
