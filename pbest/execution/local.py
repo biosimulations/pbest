@@ -5,57 +5,57 @@ import os
 import shutil
 import tempfile
 import zipfile
+from pathlib import Path
 from typing import Any
 
 from process_bigraph import Composite, gather_emitter_results
 
 from pbest.globals import get_loaded_core
-from pbest.utils.input_types import ExecutionProgramArguments
 
 logger = logging.getLogger(__name__)
 
 
-def replace_relative_pbif_paths(dic: dict[Any, Any], root_dir: str) -> None:
-    for k, v in dic.items():
-        if isinstance(v, dict):
-            replace_relative_pbif_paths(v, root_dir)
-        elif k == "model_source" or k == "output_dir":
-            dic[k] = os.path.join(root_dir, v)
+def _get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]:
+    pbg_file: str | None = None
+    with zipfile.ZipFile(omex_file, "r") as zf:
+        zf.extractall(working_dir)
+    for file_name in os.listdir(working_dir):
+        if not (file_name.endswith(".pbg") or file_name.endswith(".json")):
+            continue
+        pbg_file = os.path.join(working_dir, file_name)
+        break
 
-
-def get_pb_schema(prog_args: ExecutionProgramArguments, working_dir: str) -> dict[Any, Any]:
-    input_file: str | None = None
-    is_omex = prog_args.input_file_path.endswith(".omex") or prog_args.input_file_path.endswith(".zip")
-    if not is_omex:
-        input_file = os.path.join(working_dir, os.path.basename(prog_args.input_file_path))
-        shutil.copyfile(prog_args.input_file_path, input_file)
-    else:
-        with zipfile.ZipFile(prog_args.input_file_path, "r") as zf:
-            zf.extractall(working_dir)
-        for file_name in os.listdir(working_dir):
-            if not (file_name.endswith(".pbg") or file_name.endswith(".json")):
-                continue
-            input_file = os.path.join(working_dir, file_name)
-            break
-
-    if input_file is None:
-        err = f"Could not find any PBG or JSON file in or at `{prog_args.input_file_path}`."
+    if pbg_file is None:
+        err = f"Could not find any PBG or JSON file in or at `{omex_file}`."
         raise FileNotFoundError(err)
-    with open(input_file) as input_data:
+    with open(pbg_file) as input_data:
         result: dict[Any, Any] = json.load(input_data)
-        if is_omex:
-            replace_relative_pbif_paths(result, working_dir)
         return result
 
 
-def run_experiment(prog_args: ExecutionProgramArguments) -> None:
+def run_experiment(pbg: Path | dict[str, Any], interval: float, output_directory: Path) -> None:
+    """
+    Is the function which all other "run" related functions end up calling, both locally and on the server.
+    """
     with tempfile.TemporaryDirectory() as tmp_dir:
-        schema = get_pb_schema(prog_args, tmp_dir)
+        schema: dict = pbg
+        if isinstance(pbg, Path):
+            is_omex = pbg.suffix == ".omex"
+            is_pbg = pbg.suffix == ".pbg"
+            if not is_omex and not is_pbg:
+                err_msg = f"Expected omex file instead got {pbg}"
+                raise ValueError(err_msg)
+            if is_omex:
+                _get_pb_schema_from_omex(pbg, tmp_dir)
+            else:
+                with open(pbg) as input_data:
+                    schema = json.load(input_data)
+
         logger.debug(f"PBG schema: {schema}")
         core = get_loaded_core()
         prepared_composite = Composite(core=core, config=schema)
 
-        prepared_composite.run(prog_args.interval)
+        prepared_composite.run(interval=interval)
         query_results = gather_emitter_results(prepared_composite)
 
         current_dt = datetime.datetime.now()
@@ -63,9 +63,7 @@ def run_experiment(prog_args: ExecutionProgramArguments) -> None:
 
         try:
             if len(query_results) != 0:
-                emitter_results_file_path = os.path.join(
-                    prog_args.output_directory, f"results_{date}[{tz}#{time}].pber"
-                )
+                emitter_results_file_path = os.path.join(output_directory, f"results_{date}[{tz}#{time}].pber")
                 with open(emitter_results_file_path, "w") as emitter_results_file:
                     json.dump(query_results, emitter_results_file)
         except TypeError as e:
@@ -74,8 +72,6 @@ def run_experiment(prog_args: ExecutionProgramArguments) -> None:
 
         prepared_composite.save(filename=f"state_{date}#{time}.pbg", outdir=tmp_dir)
 
-        logger.debug(
-            f"Copying tmpdir contents [{os.listdir(tmp_dir)}] to output directory {prog_args.output_directory}"
-        )
-        shutil.copytree(tmp_dir, prog_args.output_directory, dirs_exist_ok=True)
-        logger.debug(f"Contents copied to output directory [{os.listdir(prog_args.output_directory)}]")
+        logger.debug(f"Copying tmpdir contents [{os.listdir(tmp_dir)}] to output directory {output_directory}")
+        shutil.copytree(tmp_dir, output_directory, dirs_exist_ok=True)
+        logger.debug(f"Contents copied to output directory [{os.listdir(output_directory)}]")
