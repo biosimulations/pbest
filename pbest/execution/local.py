@@ -38,7 +38,7 @@ def run_experiment(pbg: Path | dict[str, Any], interval: float, output_directory
     Is the function which all other "run" related functions end up calling, both locally and on the server.
     """
     with tempfile.TemporaryDirectory() as tmp_dir:
-        schema: dict = pbg
+        schema = pbg
         if isinstance(pbg, Path):
             is_omex = pbg.suffix == ".omex"
             is_pbg = pbg.suffix == ".pbg"

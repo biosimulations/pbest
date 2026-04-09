@@ -37,7 +37,7 @@ def _normalize_pbg_paths(pbg: Path | dict[str, Any], tmp_dir: str) -> Path:
                     og_file = Path(v)
                     new_name = og_file.name
                     sub_dict[k] = new_name
-                    if not new_name in zip_file.namelist():
+                    if new_name not in zip_file.namelist():
                         zip_file.write(og_file, new_name)
 
         update_pbg_path = Path(tmp_dir) / "updated.pbg"
@@ -48,7 +48,9 @@ def _normalize_pbg_paths(pbg: Path | dict[str, Any], tmp_dir: str) -> Path:
     return new_omex
 
 
-async def run_remote_experiment(pbg: Path | dict, interval: float, output_dir: Path, client: Client | None = None) -> SimulationExperiment:
+async def run_remote_experiment(
+    pbg: Path | dict, interval: float, output_dir: Path, client: Client | None = None
+) -> SimulationExperiment:
     if client is None:
         client = compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
 
@@ -56,7 +58,7 @@ async def run_remote_experiment(pbg: Path | dict, interval: float, output_dir: P
         omex_file = _normalize_pbg_paths(pbg, tmp_dir)
 
         with open(omex_file, "rb") as input_file:
-            sent_file = File(file_name=f"experiment.omex", payload=input_file)
+            sent_file = File(file_name="experiment.omex", payload=input_file)
             result, sim_id = await run_simulation_and_wait.async_call(
                 experiment_file=sent_file, interval=interval, client=client
             )
