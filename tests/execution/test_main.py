@@ -7,7 +7,6 @@ from typing import Any
 from bigraph_schema import Core
 
 from pbest.main import run_experiment
-from pbest.utils.input_types import ExecutionProgramArguments
 
 
 # Write a pbg that is used for comparison between Copasi and Tellurium, run it, and then check results
@@ -17,10 +16,7 @@ def test_run_experiment(comparison_document: dict[Any, Any], fully_registered_co
             file.write(json.dumps(comparison_document))
 
         os.mkdir(f"{tmpdir}/output")
-        program_arguments = ExecutionProgramArguments(
-            input_file_path=f"{tmpdir}/input.pbg", output_directory=Path(f"{tmpdir}/output"), interval=1
-        )
-        run_experiment(program_arguments)
+        run_experiment(pbg=Path(f"{tmpdir}/input.pbg"), output_directory=Path(f"{tmpdir}/output"), interval=0)
 
         result: dict[Any, Any] | None = None
         for file_name in os.listdir(f"{tmpdir}/output"):

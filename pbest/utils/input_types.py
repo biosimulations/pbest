@@ -67,14 +67,3 @@ class ContainerizationProgramArguments:
     containerization_type: ContainerizationTypes
     containerization_engine: ContainerizationEngine
     working_directory: Path
-
-
-@dataclass
-class ExecutionProgramArguments:
-    """
-    Provide information required to execute a process bi-graph.
-    """
-
-    input_file_path: str
-    interval: float
-    output_directory: Path
