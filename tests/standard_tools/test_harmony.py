@@ -8,7 +8,7 @@ from typing import Any
 
 import pytest
 
-from pbest import run_remote_experiment
+from pbest import run_remote_experiment_and_wait
 from pbest.utils.builder import CompositeBuilder
 from tests.fixtures.utils import root_dir_path
 
@@ -107,7 +107,7 @@ async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder)
     model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
     create_parameter_scan(fully_registered_builder, model_path=model_path)
     with tempfile.TemporaryDirectory() as temp_dir:
-        await run_remote_experiment(fully_registered_builder.get_builder_state(), 0, Path(temp_dir))
+        await run_remote_experiment_and_wait(fully_registered_builder.get_builder_state(), 0, Path(temp_dir))
 
         paths = os.listdir(temp_dir)
         with zipfile.ZipFile(os.path.join(temp_dir, paths[0])) as output:
