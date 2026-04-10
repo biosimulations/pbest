@@ -204,8 +204,14 @@ async def batch_run_remote_experiment_and_wait(
     print(f"Saving completed simulation results to specified directory: {output_dir}")
     for run in completed_experiments:
         result = await get_simulation_results_file.asyncio_detailed(client=client, simulation_id=run.sim_id)
-        output_name = output_dir / f"sim_{run.sim_id}_experiment_result_{datetime.datetime.now()}.zip"
-        with open(os.path.join(output_dir, output_name), "wb") as output_file:
+        output_name = output_dir / f"sim_{run.sim_id}_experiment_result_{datetime.datetime.now()}"
+        zip_path = os.path.join(output_dir, f"{output_name}.zip")
+
+        with open(zip_path, "wb") as output_file:
             output_file.write(result.content)
+        with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            os.makedirs(output_dir / output_name, exist_ok=True)
+            zip_ref.extractall(output_dir / output_name)
+            os.remove(zip_path)
 
     return completed_experiments
