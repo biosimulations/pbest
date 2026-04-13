@@ -7,9 +7,10 @@ from typing import Any
 
 from bigraph_schema import Core
 
-from pbest.main import run_experiment, get_pb_schema_from_omex
-from tests.fixtures.pb import _get_model_path
+from pbest.main import get_pb_schema_from_omex, run_experiment
 from pbest.utils.input_types import ExperimentSubmission
+from tests.fixtures.pb import _get_model_path
+
 
 def _test(input_file: Path | dict, output_dir: Path) -> None:
     os.mkdir(output_dir)

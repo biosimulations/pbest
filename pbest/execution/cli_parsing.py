@@ -43,9 +43,7 @@ running Process Bigraph Experiments.""",
             f"`input_file_path`:{input_file}  must be a JSON/PBG file (or an archive containing one) that exists!"
         )
         sys.exit(11)
-    return CLIExecutionProgramArguments(
-        file_path=input_file, output_directory=Path(output_dir), interval=args.interval
-    )
+    return CLIExecutionProgramArguments(file_path=input_file, output_directory=Path(output_dir), interval=args.interval)
 
 
 def get_program_env_variables() -> CLIExecutionProgramArguments | None:

@@ -4,9 +4,7 @@ import logging
 import os
 import shutil
 import tempfile
-import zipfile
 from pathlib import Path
-from typing import Any
 
 from process_bigraph import Composite, gather_emitter_results
 
@@ -14,6 +12,7 @@ from pbest.globals import get_loaded_core
 from pbest.utils.input_types import ExperimentSubmission
 
 logger = logging.getLogger(__name__)
+
 
 def run_experiment(submission: ExperimentSubmission, output_directory: Path) -> None:
     """
