@@ -7,8 +7,8 @@ from typing import Any
 
 from bigraph_schema import Core
 
-from pbest.execution.local import get_pb_schema_from_omex
-from pbest.main import run_experiment
+from pbest.main import run_experiment, get_pb_schema_from_omex
+from tests.fixtures.pb import _get_model_path
 from pbest.utils.input_types import ExperimentSubmission
 
 def _test(input_file: Path | dict, output_dir: Path) -> None:
@@ -37,13 +37,22 @@ def _test(input_file: Path | dict, output_dir: Path) -> None:
 def test_run_experiment(comparison_document: dict[Any, Any], fully_registered_core: Core) -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         pbg_file = Path(tmpdir) / "input.pbg"
+        pbg_string = json.dumps(comparison_document)
         with open(pbg_file, "w") as file:
-            file.write(json.dumps(comparison_document))
+            file.write(pbg_string)
         _test(pbg_file, Path(tmpdir) / "pbg_output")
 
-        # Test handling of omex too
+
+def test_run_experiment_omex(comparison_document: dict[Any, Any], fully_registered_core: Core) -> None:
+    with tempfile.TemporaryDirectory() as tmpdir:
+        model_name = "BIOMD0000000012_url.xml"
+        pbg_string = json.dumps(comparison_document).replace(_get_model_path(), model_name)
+        pbg_relative = Path(tmpdir) / "relative.pbg"
+        with open(pbg_relative, "w") as file:
+            file.write(pbg_string)
         omex_file = Path(tmpdir) / "output.omex"
         with zipfile.ZipFile(omex_file, "w") as zip_ref:
-            zip_ref.write(pbg_file, "input.pbg")
+            zip_ref.write(pbg_relative, "input.pbg")
+            zip_ref.write(_get_model_path(), model_name)
         pbg = get_pb_schema_from_omex(omex_file, tmpdir)
         _test(pbg, Path(tmpdir) / "omex_output")

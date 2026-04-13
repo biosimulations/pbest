@@ -15,25 +15,6 @@ from pbest.utils.input_types import ExperimentSubmission
 
 logger = logging.getLogger(__name__)
 
-
-def get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]:
-    pbg_file: str | None = None
-    with zipfile.ZipFile(omex_file, "r") as zf:
-        zf.extractall(working_dir)
-    for file_name in os.listdir(working_dir):
-        if not (file_name.endswith(".pbg") or file_name.endswith(".json")):
-            continue
-        pbg_file = os.path.join(working_dir, file_name)
-        break
-
-    if pbg_file is None:
-        err = f"Could not find any PBG or JSON file in or at `{omex_file}`."
-        raise FileNotFoundError(err)
-    with open(pbg_file) as input_data:
-        result: dict[Any, Any] = json.load(input_data)
-        return result
-
-
 def run_experiment(submission: ExperimentSubmission, output_directory: Path) -> None:
     """
     Is the function which all other "run" related functions end up calling, both locally and on the server.
