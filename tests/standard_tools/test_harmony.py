@@ -2,7 +2,6 @@ import json
 import math
 import os
 import tempfile
-import zipfile
 from pathlib import Path
 from typing import Any
 

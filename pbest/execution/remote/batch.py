@@ -1,34 +1,30 @@
 import asyncio
-import copy
 import datetime
-import json
 import os
-import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any
 
-import compose_api_client
 from compose_api_client.api.results import get_simulation_results_file, get_simulations_status_batch
-from compose_api_client.api.simulation import run_simulation
-from compose_api_client.models import BodyRunSimulation, HpcRun, JobStatus, SimulationExperiment
-from compose_api_client.types import File
-from compose_api_client.utils import run_simulation_and_wait
+from compose_api_client.models import HpcRun, JobStatus, SimulationExperiment
 from httpx import Client
 
-from pbest.execution.remote.utils import _default_client, _normalize_pbg_paths
 from pbest.execution.remote.single import run_remote_experiment
+from pbest.execution.remote.utils import _default_client
 
 
-async def get_simulation_status(simulations: list[SimulationExperiment] | list[int], client: Client | None = None) -> list[HpcRun]:
+async def get_simulation_status(
+    simulations: list[SimulationExperiment] | list[int], client: Client | None = None
+) -> list[HpcRun]:
     if client is None:
         client = _default_client()
     sent_simulations = simulations.copy()
-    if len(simulations) !=0 and isinstance(simulations[0], SimulationExperiment):
+    if len(simulations) != 0 and isinstance(simulations[0], SimulationExperiment):
         sent_simulations = []
         for i in simulations:
-            assert isinstance(i, SimulationExperiment)
-            sent_simulations.append(i.simulation_database_id)
+            if isinstance(i, SimulationExperiment):
+                sent_simulations.append(i.simulation_database_id)
+            else:
+                sent_simulations.append(i)
     response = await get_simulations_status_batch.asyncio_detailed(client=client, body=sent_simulations)
     if response.status_code != 200:
         err_msg = f"Error when attempting to get simulation status: {response}"
@@ -47,8 +43,10 @@ async def batch_run_remote_experiment(
         result.append(await run_remote_experiment(all_pbgs[i], all_intervals[i], client))
     return result
 
-def print_statuses(hpc_runs: list[HpcRun | None], completed_runs: list[HpcRun], incomplete_runs: list[HpcRun],
-                   ids_to_check: list[int]) -> None:
+
+def print_statuses(
+    hpc_runs: list[HpcRun | None], completed_runs: list[HpcRun], incomplete_runs: list[HpcRun], ids_to_check: list[int]
+) -> None:
     incomplete_statuses = {
         JobStatus.FAILED,
         JobStatus.CANCELLED,
@@ -119,8 +117,10 @@ async def batch_run_remote_experiment_and_wait(
         await asyncio.sleep(sleep_interval)
         running_experiments = await get_simulation_status(simulations=ids_to_check, client=client)
         print_statuses(
-            hpc_runs=running_experiments, completed_runs=completed_experiments, incomplete_runs=incomplete_experiments,
-            ids_to_check=ids_to_check
+            hpc_runs=running_experiments,
+            completed_runs=completed_experiments,
+            incomplete_runs=incomplete_experiments,
+            ids_to_check=ids_to_check,
         )
         num_loops += 1
         print(f"{sleep_interval * num_loops} seconds have passed.")
