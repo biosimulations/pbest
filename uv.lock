@@ -240,16 +240,16 @@ wheels = [
 
 [[package]]
 name = "compose-api-client"
-version = "0.1.8"
+version = "0.1.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "httpx" },
     { name = "python-dateutil" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ba/c6/1a3537f83a5a364ef02f3d191651386d8d912f61aec5a84cf2e8db807cc3/compose_api_client-0.1.8.tar.gz", hash = "sha256:2a7069889676334191a31341f51b982d4c3a365aec76ddded4b6aa5258ebcbbb", size = 13891, upload-time = "2026-03-27T17:25:21.035Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/66/9a/b0881ff5320f376f2e1dad3240af3e1130e8e709b394613851d3e449b6cc/compose_api_client-0.1.9.tar.gz", hash = "sha256:d482a872b56249df63636569df85d81e901b5a6465c93412fa6b537713ae0f2c", size = 14335, upload-time = "2026-04-09T18:42:50.227Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/fc/6459378ec43f41aadb608130f77efcc235ea7fa954d495cef0040aea9628/compose_api_client-0.1.8-py3-none-any.whl", hash = "sha256:8013acbbb59d3a6c3fc46d6dfea865a7bdbe2bde5139258ad0d3dc0c687e5e86", size = 36248, upload-time = "2026-03-27T17:25:19.961Z" },
+    { url = "https://files.pythonhosted.org/packages/26/ee/d322a4983ad8bb23946d155e34609d120c49c19659c8d51aadb070cb2bef/compose_api_client-0.1.9-py3-none-any.whl", hash = "sha256:e6c61ad875ebc11215e8043da9e46dde4d4788e70d65060320a74eff1d35ded2", size = 37545, upload-time = "2026-04-09T18:42:51.076Z" },
 ]
 
 [[package]]
@@ -1324,7 +1324,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "bigraph-schema", specifier = ">=1.0.14" },
-    { name = "compose-api-client", specifier = "==0.1.8" },
+    { name = "compose-api-client", specifier = "==0.1.9" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "pbsim-common", specifier = ">=0.1.2" },
