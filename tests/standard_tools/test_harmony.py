@@ -109,12 +109,9 @@ async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder)
     with tempfile.TemporaryDirectory() as temp_dir:
         await run_remote_experiment_and_wait(fully_registered_builder.get_builder_state(), 0, Path(temp_dir))
 
-        paths = os.listdir(temp_dir)
-        with zipfile.ZipFile(os.path.join(temp_dir, paths[0])) as output:
-            output.extractall(temp_dir)
+        store_path = os.listdir(temp_dir)[0]
+        result_pbg = next(k for k in os.listdir(os.path.join(temp_dir, store_path)) if "state" in k)
 
-        result_pbg = next(k for k in os.listdir(os.path.join(temp_dir, "output")) if "state" in k)
-
-        with open(os.path.join(temp_dir, "output", result_pbg)) as result_file:
+        with open(os.path.join(temp_dir, store_path, result_pbg)) as result_file:
             json_data = json.load(result_file)
             perform_parameter_scan_comparison(json_data["state"]["parameter_scan_0"]["results"])

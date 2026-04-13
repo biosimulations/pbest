@@ -1,16 +1,14 @@
+import json
 import os
 import tempfile
-import zipfile
 from pathlib import Path
 
 import pytest
 
-from pbest.execution.remote import batch_run_remote_experiment_and_wait
+from pbest.execution.remote.batch import batch_run_remote_experiment_and_wait
 from pbest.utils.builder import CompositeBuilder
 from tests.fixtures.utils import root_dir_path
-from tests.standard_tools.test_harmony import create_parameter_scan
-import json
-from tests.standard_tools.test_harmony import perform_parameter_scan_comparison
+from tests.standard_tools.test_harmony import create_parameter_scan, perform_parameter_scan_comparison
 
 
 @pytest.mark.asyncio
