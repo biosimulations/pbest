@@ -15,7 +15,7 @@ class CLIExecutionProgramArguments:
     Provide information required to execute a process bi-graph.
     """
 
-    omex_file_path: Path
+    file_path: Path
     interval: float
     output_directory: Path
 
@@ -44,7 +44,7 @@ running Process Bigraph Experiments.""",
         )
         sys.exit(11)
     return CLIExecutionProgramArguments(
-        omex_file_path=input_file, output_directory=Path(output_dir), interval=args.interval
+        file_path=input_file, output_directory=Path(output_dir), interval=args.interval
     )
 
 
@@ -55,7 +55,7 @@ def get_program_env_variables() -> CLIExecutionProgramArguments | None:
     if pb_input_path is None or output_dir is None or interval is None:
         return None
     return CLIExecutionProgramArguments(
-        omex_file_path=Path(pb_input_path),
+        file_path=Path(pb_input_path),
         output_directory=Path(output_dir),
         interval=int(interval),
     )

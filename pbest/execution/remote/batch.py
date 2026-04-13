@@ -10,6 +10,7 @@ from httpx import Client
 
 from pbest.execution.remote.single import run_remote_experiment
 from pbest.execution.remote.utils import _default_client
+from pbest.utils.input_types import ExperimentSubmission
 
 
 async def get_simulation_status(
@@ -34,13 +35,13 @@ async def get_simulation_status(
 
 
 async def batch_run_remote_experiment(
-    all_pbgs: list[Path] | list[dict], all_intervals: list[float], client: Client | None = None
+    submissions: list[ExperimentSubmission], client: Client | None = None
 ) -> list[SimulationExperiment]:
     if client is None:
         client = _default_client()
     result: list[SimulationExperiment] = []
-    for i in range(len(all_pbgs)):
-        result.append(await run_remote_experiment(all_pbgs[i], all_intervals[i], client))
+    for i in submissions:
+        result.append(await run_remote_experiment(i, client))
     return result
 
 
@@ -90,16 +91,14 @@ def print_summary(hpc_runs: list[HpcRun | None], completed_runs: list[HpcRun], i
 
 
 async def batch_run_remote_experiment_and_wait(
-    all_pbgs: list[Path] | list[dict], all_intervals: list[float], output_dir: Path, client: Client | None = None
-) -> list[SimulationExperiment]:
+    submissions: list[ExperimentSubmission], output_dir: Path, client: Client | None = None
+) -> list[HpcRun]:
     if client is None:
         client = _default_client()
-    simulation_experiments: list[SimulationExperiment] = await batch_run_remote_experiment(
-        all_pbgs, all_intervals, client
-    )
+    simulation_experiments: list[SimulationExperiment] = await batch_run_remote_experiment(submissions, client)
     ids_to_check: list[int] = [i.simulation_database_id for i in simulation_experiments]
 
-    running_experiments: list[SimulationExperiment] = []
+    running_experiments: list[HpcRun | None] = []
     num_loops = 0
     sleep_interval = 2
     while len(running_experiments) == 0 and num_loops < 10:

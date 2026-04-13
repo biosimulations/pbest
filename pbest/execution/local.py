@@ -11,11 +11,12 @@ from typing import Any
 from process_bigraph import Composite, gather_emitter_results
 
 from pbest.globals import get_loaded_core
+from pbest.utils.input_types import ExperimentSubmission
 
 logger = logging.getLogger(__name__)
 
 
-def _get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]:
+def get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]:
     pbg_file: str | None = None
     with zipfile.ZipFile(omex_file, "r") as zf:
         zf.extractall(working_dir)
@@ -33,29 +34,26 @@ def _get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any
         return result
 
 
-def run_experiment(pbg: Path | dict[str, Any], interval: float, output_directory: Path) -> None:
+def run_experiment(submission: ExperimentSubmission, output_directory: Path) -> None:
     """
     Is the function which all other "run" related functions end up calling, both locally and on the server.
     """
     with tempfile.TemporaryDirectory() as tmp_dir:
-        schema = pbg
-        if isinstance(pbg, Path):
-            is_omex = pbg.suffix == ".omex"
-            is_pbg = pbg.suffix == ".pbg"
-            if not is_omex and not is_pbg:
-                err_msg = f"Expected omex file instead got {pbg}"
+        schema = submission.pbg
+        if isinstance(submission.pbg, Path):
+            is_pbg = submission.pbg.suffix == ".pbg"
+            if not is_pbg:
+                err_msg = f"Expected pbg file instead got {submission.pbg}"
                 raise ValueError(err_msg)
-            if is_omex:
-                _get_pb_schema_from_omex(pbg, tmp_dir)
             else:
-                with open(pbg) as input_data:
+                with open(submission.pbg) as input_data:
                     schema = json.load(input_data)
 
         logger.debug(f"PBG schema: {schema}")
         core = get_loaded_core()
         prepared_composite = Composite(core=core, config=schema)
 
-        prepared_composite.run(interval=interval)
+        prepared_composite.run(interval=submission.interval)
         query_results = gather_emitter_results(prepared_composite)
 
         current_dt = datetime.datetime.now()

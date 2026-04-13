@@ -7,6 +7,7 @@ import pytest
 
 from pbest.execution.remote.batch import batch_run_remote_experiment_and_wait
 from pbest.utils.builder import CompositeBuilder
+from pbest.utils.input_types import ExperimentSubmission
 from tests.fixtures.utils import root_dir_path
 from tests.standard_tools.test_harmony import create_parameter_scan, perform_parameter_scan_comparison
 
@@ -17,11 +18,10 @@ async def test_batch_run_remote_experiment_and_wait(fully_registered_builder: Co
     create_parameter_scan(fully_registered_builder, model_path=model_path)
 
     builder_states = fully_registered_builder.get_builder_state()
-    all_pbgs = [builder_states, builder_states]
-    all_intervals = [0, 0]
+    all_pbgs = [ExperimentSubmission(pbg=builder_states, interval=0) for k in range(2)]
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        completed = await batch_run_remote_experiment_and_wait(all_pbgs, all_intervals, Path(temp_dir))
+        completed = await batch_run_remote_experiment_and_wait(all_pbgs, Path(temp_dir))
 
         assert len(completed) == len(all_pbgs)
         paths = os.listdir(temp_dir)

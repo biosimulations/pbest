@@ -1,5 +1,6 @@
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 from pydantic import BaseModel, HttpUrl
 from pydantic.dataclasses import dataclass
@@ -67,3 +68,9 @@ class ContainerizationProgramArguments:
     containerization_type: ContainerizationTypes
     containerization_engine: ContainerizationEngine
     working_directory: Path
+
+
+@dataclass(frozen=True)
+class ExperimentSubmission:
+    pbg: Path | dict[str, Any]
+    interval: float
