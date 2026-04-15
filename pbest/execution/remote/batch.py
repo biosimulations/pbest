@@ -91,7 +91,7 @@ def print_summary(hpc_runs: list[HpcRun | None], completed_runs: list[HpcRun], i
 
 
 async def batch_run_remote_experiment_and_wait(
-    submissions: list[ExperimentSubmission], output_dir: Path, client: Client | None = None
+    submissions: list[ExperimentSubmission], output_dir: Path, client: Client | None = None, seconds_to_wait: int = 600
 ) -> list[HpcRun]:
     if client is None:
         client = _default_client()
@@ -101,17 +101,24 @@ async def batch_run_remote_experiment_and_wait(
     running_experiments: list[HpcRun | None] = []
     num_loops = 0
     sleep_interval = 2
-    while len(running_experiments) == 0 and num_loops < 10:
+    loops_to_wait = seconds_to_wait / sleep_interval
+
+    print("Waiting for simulations to be submitted to slurm...")
+    while len(running_experiments) == 0 and num_loops < loops_to_wait:
         running_experiments = await get_simulation_status(simulations=ids_to_check, client=client)
         await asyncio.sleep(sleep_interval)
         num_loops += 1
+        print(f"Waited for {num_loops * sleep_interval} seconds.")
     completed_experiments: list[HpcRun] = []
     incomplete_experiments: list[HpcRun] = []
 
-    num_loops = 0
-    seconds_to_wait = 600
-    loops_to_wait = seconds_to_wait / sleep_interval
+    if len(running_experiments) == 0:
+        err_msg = (f"After waiting for {seconds_to_wait} seconds for simulations to be submitted to slurm, "
+                   f"and none have been submitted.\nStopping current execution wait.")
+        raise TimeoutError(err_msg)
 
+    print("At least one simulation has been submitted. Now monitoring if simulations have completed.")
+    num_loops = 0
     while len(running_experiments) != 0 and num_loops < loops_to_wait:
         await asyncio.sleep(sleep_interval)
         running_experiments = await get_simulation_status(simulations=ids_to_check, client=client)
