@@ -36,14 +36,14 @@ def get_default_config() -> dict[str, Any]:
 def readdy_document() -> dict[str, Any]:
     emitters_from_wires = emitter_from_wires(
         {"particles": ["particles"], "topologies": ["topologies"], "global_time": ["global_time"]},
-        address="local:pb_multiscale_actin.processes.simularium_emitter.SimulariumEmitter",
+        address="local:SimulariumEmitter",
     )
 
     readd_pbg = {
         "emitter": emitters_from_wires,
         "readdy": {
             "_type": "process",
-            "address": "local:pb_multiscale_actin.processes.readdy_actin_membrane.ReaddyActinMembrane",
+            "address": "local:ReaddyActinMembrane",
             "config": get_default_config(),
             "inputs": {"particles": ["particles"], "topologies": ["topologies"]},
             "outputs": {"particles": ["particles"], "topologies": ["topologies"]},

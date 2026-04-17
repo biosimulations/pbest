@@ -16,8 +16,11 @@ VERSION=$(uv version --short)
 echo "Current version is ${VERSION}"
 read -p "Set new version (default is the same): " NEW_VERSION
 NEW_VERSION=${NEW_VERSION:-${VERSION}}
+sed -i '' "s/pbest_tag: str = \"[^\"]*\"/pbest_tag: str = \"$NEW_VERSION\"/" pbest/containerization/container_constructor.py
+
 uv version ${NEW_VERSION}
 uv build
+
 
 git add --all
 git commit -m "Release Version: ${NEW_VERSION}"

@@ -1291,7 +1291,7 @@ wheels = [
 
 [[package]]
 name = "pbest"
-version = "0.5.2"
+version = "0.5.3"
 source = { editable = "." }
 dependencies = [
     { name = "bigraph-schema" },
@@ -1323,12 +1323,12 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "bigraph-schema", specifier = ">=1.0.14" },
+    { name = "bigraph-schema", specifier = "==1.0.14" },
     { name = "compose-api-client", specifier = "==0.1.9" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "pbsim-common", specifier = ">=0.1.2" },
-    { name = "process-bigraph", specifier = ">=1.0.5" },
+    { name = "process-bigraph", specifier = "==1.0.5" },
     { name = "pydantic", specifier = ">=2.12.3" },
     { name = "spython", specifier = ">=0.3.14" },
 ]

@@ -6,7 +6,7 @@ RUN apt install -y git curl
 
 RUN mkdir /runtime
 WORKDIR /runtime
-RUN git clone https://github.com/biosimulations/pbest.git /runtime
+RUN git clone --branch {{ pbest_tag }} https://github.com/biosimulations/pbest.git /runtime
 RUN uv pip compile pyproject.toml -o requirements.txt
 # RUN uv pip sync --system --directory /runtime requirements.txt
 

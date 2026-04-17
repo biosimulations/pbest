@@ -113,8 +113,10 @@ async def batch_run_remote_experiment_and_wait(
     incomplete_experiments: list[HpcRun] = []
 
     if len(running_experiments) == 0:
-        err_msg = (f"After waiting for {seconds_to_wait} seconds for simulations to be submitted to slurm, "
-                   f"and none have been submitted.\nStopping current execution wait.")
+        err_msg = (
+            f"After waiting for {seconds_to_wait} seconds for simulations to be submitted to slurm, "
+            f"and none have been submitted.\nStopping current execution wait."
+        )
         raise TimeoutError(err_msg)
 
     print("At least one simulation has been submitted. Now monitoring if simulations have completed.")
