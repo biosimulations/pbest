@@ -53,7 +53,7 @@ def get_experiment_deps() -> ExperimentPrimaryDependencies:
 def formulate_dockerfile_for_necessary_env(
     program_arguments: ContainerizationProgramArguments,
     experiment_deps: ExperimentPrimaryDependencies,
-    pbest_tag: str = "0.5.2",
+    pbest_tag: str = "0.5.3",
 ) -> ContainerizationFileRepr:
     # pb_document_str: str
     deps_install_command: str = ""
