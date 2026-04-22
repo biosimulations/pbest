@@ -1,16 +1,13 @@
-[![Release](https://img.shields.io/github/v/release/biosimulators/biosim-registry)](https://img.shields.io/github/v/release/biosimulators/bsedic)
-[![Build status](https://img.shields.io/github/actions/workflow/status/biosimulators/biosim-registry/main.yml?branch=main)](https://github.com/biosimulators/biosim-registry/actions/workflows/main.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/biosimulators/biosim-registry/branch/main/graph/badge.svg)](https://codecov.io/gh/biosimulators/biosim-registry)
-[![License](https://img.shields.io/github/license/biosimulators/biosim-registry)](https://img.shields.io/github/license/biosimulators/biosim-registry)
+# PBest
+Process Bi-Graph Extensible Simulation Toolkit
+A python library meant to be used by the scientific community. The libraries features are:
 
-# BioSimulations Registry
-A repository filled with high quality processes, steps, and composites for process bi-graph.
-All used as a standard library for process bi-graph.
+- Submit simulations to a remote HPC 
+  - Default HPC is [UCHC](https://health.uconn.edu/high-performance-computing/), but can be specified to another so long as the designated HPC has a [Compose-API](https://github.com/biosimulations/compose-api) server.
 
+- Containerize simulation environments for easy repeatability.
 
-- **Github repository**: <https://github.com/biosimulators/biosim-registry/>
-- **Documentation** <https://biosimulators.github.io/biosim-registry/>
+- Tools for building Process Bi-Graph workflows.
 
 ---
 
-Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
