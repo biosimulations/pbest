@@ -3,6 +3,7 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 RUN apt update
 RUN apt upgrade -y
 RUN apt install -y git curl
+RUN apt install -y libnetcdf-dev libnetcdf-c++4-dev # File format libraries for mem3DG
 
 RUN mkdir /runtime
 WORKDIR /runtime
