@@ -28,6 +28,7 @@ def get_experiment_deps() -> ExperimentPrimaryDependencies:
         {"name": "matplotlib", "version": ""},
         {"name": "scipy", "version": ""},
         {"name": "pb_multiscale_actin", "version": "1.3.1"},
+        {"name": "pbg-mem3dg", "version": "0.1.0"}
     ]
     return ExperimentPrimaryDependencies(
         pypi_dependencies=[
