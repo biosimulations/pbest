@@ -69,7 +69,7 @@ def formulate_dockerfile_for_necessary_env(
         )
         if p == 0:
             deps_install_command += (
-                f"RUN micromamba run -p {micromamba_env_path} python3 -m pip install '{install_line}'"
+                f"RUN export CMAKE_ARGS='-DCMAKE_POLICY_VERSION_MINIMUM=3.5' && export CMAKE_BUILD_PARALLEL_LEVEL=8 && micromamba run -p {micromamba_env_path} python3 -m pip install '{install_line}'"
             )
         elif p != len(pypi_deps) - 1:
             deps_install_command += f" '{install_line}'"
