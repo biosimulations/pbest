@@ -12,12 +12,8 @@ import docker
 import pytest
 from docker.errors import ContainerError
 
-from pbest.containerization.container_constructor import formulate_dockerfile_for_necessary_env, get_experiment_deps
-from pbest.utils.input_types import (
-    ContainerizationEngine,
-    ContainerizationProgramArguments,
-    ContainerizationTypes,
-)
+from pbest.containerization.container_constructor import _default_experiment_deps, \
+    generate_container_def_file
 from tests.fixtures.pb import _get_model_path
 from tests.fixtures.utils import is_docker_present
 from tests.standard_tools.test_comparison import comparison_result_dict_test
@@ -30,20 +26,12 @@ def build_image_and_run_experiment(
     time_to_run: int = 1,
     show_logs: bool = False,
 ) -> None:
-    experiment_deps = get_experiment_deps()
+    experiment_deps = _default_experiment_deps()
     docker_image_path = f"{input_dir}{os.sep}Dockerfile"
     docker_tag = "test_crbm_containerization"
 
     with open(docker_image_path, "w") as f:
-        docker_file = formulate_dockerfile_for_necessary_env(
-            ContainerizationProgramArguments(
-                containerization_type=ContainerizationTypes.SINGLE,
-                containerization_engine=ContainerizationEngine.DOCKER,
-                working_directory=Path(input_dir),
-                input_file_path=str(input_file),
-            ),
-            experiment_deps,
-        )
+        docker_file = generate_container_def_file(dependencies=experiment_deps)
         f.write(docker_file.representation)
 
     # Subprocess because SDK seems to have problems building containers for other platforms

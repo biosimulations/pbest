@@ -21,6 +21,7 @@ class ContainerizationEngine(Enum):
 
 class ContainerizationFileRepr(BaseModel):
     representation: str
+    containerization_engine: ContainerizationEngine
 
 
 class DependencyTypes(Enum):
