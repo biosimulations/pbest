@@ -60,18 +60,6 @@ class ExperimentPrimaryDependencies:
 
 
 @dataclass(frozen=True)
-class ContainerizationProgramArguments:
-    """
-    Create a container acting as an isolated environment for execution.
-    """
-
-    input_file_path: str
-    containerization_type: ContainerizationTypes
-    containerization_engine: ContainerizationEngine
-    working_directory: Path
-
-
-@dataclass(frozen=True)
 class ExperimentSubmission:
     pbg: Path | dict[str, Any]
     interval: float
