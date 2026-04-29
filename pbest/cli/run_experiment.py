@@ -3,10 +3,11 @@ import logging
 import os
 import tempfile
 import zipfile
+from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any
 
-import pbest.execution.cli_parsing as cli_parsing
+import pbest.cli.parsing.run_experiment_parsing as cli_parsing
 from pbest.execution.local import run_experiment
 from pbest.globals import set_logging_config
 from pbest.utils.input_types import ExperimentSubmission
@@ -34,14 +35,12 @@ def get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]
         result: dict[Any, Any] = json.loads(json_string)
         return result
 
-def cli_run_experiment():
+def cli_run_experiment(parser: ArgumentParser) -> None:
     log_level = os.getenv("LOGGER_LEVEL", "INFO")
     set_logging_config(log_level)
 
     logger.info("Starting execution...")
-    program_arguments = cli_parsing.get_program_env_variables()
-    if program_arguments is None:
-        program_arguments = cli_parsing.get_program_arguments()
+    program_arguments = cli_parsing.parse_run_args(parser=parser)
     logger.info("Got Program Arguments: " + str(program_arguments))
 
     pbg: Path | dict = program_arguments.file_path
