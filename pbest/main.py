@@ -5,7 +5,7 @@ from pbest.cli.run_experiment import cli_run_experiment
 from pbest.cli.parsing import run_experiment_parsing, containerization_parsing
 
 
-if __name__ == "__main__":
+def cli_tool():
     parser: ArgumentParser = ArgumentParser(
         prog="Process Bigraph Extensible Simulation Toolkit  (PBest)",
         description="""Everything required to run a process bigraph file, and containerize the environment used to run it.""",
@@ -22,3 +22,7 @@ if __name__ == "__main__":
         cli_run_experiment(parser=parser)
     elif command == "containerize":
         cli_run_containerization(parser=parser)
+
+
+if __name__ == "__main__":
+    cli_tool()
