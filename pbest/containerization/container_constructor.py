@@ -48,7 +48,7 @@ def _default_experiment_deps() -> ExperimentPrimaryDependencies:
 
 def _formulate_dockerfile_for_necessary_env(
     experiment_deps: ExperimentPrimaryDependencies,
-    pbest_tag: str = "0.5.5",
+    pbest_tag: str = "0.5.6",
 ) -> ContainerizationFileRepr:
     deps_install_command: str = ""
     pypi_deps = experiment_deps.get_pypi_dependencies()
