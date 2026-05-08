@@ -63,3 +63,8 @@ class ExperimentPrimaryDependencies:
 class ExperimentSubmission:
     pbg: Path | dict[str, Any]
     interval: float
+
+@dataclass(frozen=True)
+class OmexExperimentSubmission:
+    omex: Path
+    interval: float

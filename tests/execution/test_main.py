@@ -7,7 +7,8 @@ from typing import Any
 
 from bigraph_schema import Core
 
-from pbest.main import get_pb_schema_from_omex, run_experiment
+from pbest import run_experiment
+from pbest.execution.local import _get_pb_schema_from_omex
 from pbest.utils.input_types import ExperimentSubmission
 from tests.fixtures.pb import _get_model_path
 
@@ -55,5 +56,5 @@ def test_run_experiment_omex(comparison_document: dict[Any, Any], fully_register
         with zipfile.ZipFile(omex_file, "w") as zip_ref:
             zip_ref.write(pbg_relative, "input.pbg")
             zip_ref.write(_get_model_path(), model_name)
-        pbg = get_pb_schema_from_omex(omex_file, tmpdir)
+        pbg = _get_pb_schema_from_omex(omex_file, tmpdir)
         _test(pbg, Path(tmpdir) / "omex_output")
