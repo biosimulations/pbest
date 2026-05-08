@@ -2,6 +2,7 @@ import os
 import tempfile
 from pathlib import Path
 
+import httpx
 from jinja2 import Template
 from pydantic import HttpUrl
 from spython.main.parse.parsers import DockerParser  # type: ignore[import-untyped]
@@ -18,32 +19,29 @@ from pbest.utils.input_types import (
 
 micromamba_env_path = "/micromamba_env/runtime_env"
 
+_REGISTRY_URL = "https://raw.githubusercontent.com/biosimulations/registry/refs/heads/dev/registry.json"
 
-def _default_experiment_deps() -> ExperimentPrimaryDependencies:
-    pypi_deps = [
-        {"name": "python-copasi", "version": "4.46.300"},
-        {"name": "tellurium", "version": "2.2.11.1"},
-        {"name": "pb_multiscale_actin", "version": "1.3.1"}
-    ]
-    return ExperimentPrimaryDependencies(
-        pypi_dependencies=[
-            ExperimentDependency(
-                dependency_name=package["name"],
-                url_reference=DependencyTypes.get_pypi_url(package["name"]),
-                dependency_type=DependencyTypes.PYPI,
-                version=package["version"],
-            )
-            for package in pypi_deps
-        ],
-        conda_dependencies=[
-            ExperimentDependency(
-                dependency_name="readdy",
-                url_reference=HttpUrl("https://github.com/readdy/readdy"),
-                dependency_type=DependencyTypes.CONDA,
-                version="2.0.13",
-            )
-        ],
-    )
+
+def _default_registry_deps() -> ExperimentPrimaryDependencies:
+    response = httpx.get(_REGISTRY_URL)
+    response.raise_for_status()
+    libraries = response.json()["libraries"]
+
+    pypi: list[ExperimentDependency] = []
+    conda: list[ExperimentDependency] = []
+    for lib in libraries:
+        dep = ExperimentDependency(
+            dependency_name=lib["name"],
+            url_reference=HttpUrl(lib["url"]),
+            dependency_type=DependencyTypes.PYPI if lib["package_registry"] == "pypi" else DependencyTypes.CONDA,
+            version=lib.get("version", ""),
+        )
+        if lib["package_registry"] == "pypi":
+            pypi.append(dep)
+        else:
+            conda.append(dep)
+
+    return ExperimentPrimaryDependencies(pypi_dependencies=pypi, conda_dependencies=conda)
 
 
 def _formulate_dockerfile_for_necessary_env(
@@ -79,7 +77,7 @@ def _formulate_dockerfile_for_necessary_env(
     return ContainerizationFileRepr(representation=templated_container, containerization_engine=ContainerizationEngine.DOCKER)
 
 def _get_dependencies_from_pbg():
-    return _default_experiment_deps()
+    return _default_registry_deps()
 
 def _get_dependencies_from_registry():
     pass

@@ -12,7 +12,7 @@ import docker
 import pytest
 from docker.errors import ContainerError
 
-from pbest.containerization.container_constructor import _default_experiment_deps, \
+from pbest.containerization.container_constructor import _default_registry_deps, \
     generate_container_def_file
 from tests.fixtures.pb import _get_model_path
 from tests.fixtures.utils import is_docker_present
@@ -27,7 +27,7 @@ def build_image_and_run_experiment(
     show_logs: bool = False,
     platform: str = "linux/amd64",
 ) -> None:
-    experiment_deps = _default_experiment_deps()
+    experiment_deps = _default_registry_deps()
     docker_image_path = f"{input_dir}{os.sep}Dockerfile"
     docker_tag = "test_crbm_containerization"
 
