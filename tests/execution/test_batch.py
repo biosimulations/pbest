@@ -21,7 +21,7 @@ async def test_batch_run_remote_experiment_and_wait(fully_registered_builder: Co
     all_pbgs = [ExperimentSubmission(pbg=builder_states, interval=0) for k in range(2)]
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        completed = await batch_run_remote_experiment_and_wait(all_pbgs, Path(temp_dir))
+        completed = await batch_run_remote_experiment_and_wait(all_pbgs, Path(temp_dir), seconds_to_wait=60)
 
         assert len(completed) == len(all_pbgs)
         paths = os.listdir(temp_dir)

@@ -108,7 +108,8 @@ async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder)
     create_parameter_scan(fully_registered_builder, model_path=model_path)
     with tempfile.TemporaryDirectory() as temp_dir:
         await run_remote_experiment_and_wait(
-            ExperimentSubmission(pbg=fully_registered_builder.get_builder_state(), interval=0), Path(temp_dir)
+            ExperimentSubmission(pbg=fully_registered_builder.get_builder_state(), interval=0), Path(temp_dir),
+            seconds_to_wait=30
         )
 
         store_path = os.listdir(temp_dir)[0]
