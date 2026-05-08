@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pbest.cli.parsing.containerization_parsing import parse_container_args
 from pbest.cli.types import CLIContainerizationProgramArguments
-from pbest.containerization.container_constructor import generate_container_def_file, _default_experiment_deps
+from pbest.containerization.container_constructor import _default_registry_deps, generate_container_def_file
 from pbest.utils.input_types import ExperimentPrimaryDependencies
 
 
@@ -14,9 +14,11 @@ def cli_run_containerization(parser: ArgumentParser) -> None:
     try:
         dependencies: ExperimentPrimaryDependencies | Path = prog_args.input
         if dependencies == "":
-            dependencies = _default_experiment_deps()
+            dependencies = _default_registry_deps()
 
-        container_file = generate_container_def_file(dependencies=dependencies, container_engine=prog_args.containerization_engine)
+        container_file = generate_container_def_file(
+            dependencies=dependencies, container_engine=prog_args.containerization_engine
+        )
         container_path = os.path.join(prog_args.output_directory, str(prog_args.containerization_engine.name))
         if os.path.exists(container_path):
             k = 1

@@ -11,7 +11,6 @@ from spython.main.parse.writers import SingularityWriter  # type: ignore[import-
 from pbest.utils.input_types import (
     ContainerizationEngine,
     ContainerizationFileRepr,
-    ContainerizationTypes,
     DependencyTypes,
     ExperimentDependency,
     ExperimentPrimaryDependencies,
@@ -74,15 +73,22 @@ def _formulate_dockerfile_for_necessary_env(
             dependencies_to_install=deps_install_command, micromamba_env_path=micromamba_env_path, pbest_tag=pbest_tag
         )
 
-    return ContainerizationFileRepr(representation=templated_container, containerization_engine=ContainerizationEngine.DOCKER)
+    return ContainerizationFileRepr(
+        representation=templated_container, containerization_engine=ContainerizationEngine.DOCKER
+    )
 
-def _get_dependencies_from_pbg():
+
+def _get_dependencies_from_pbg() -> ExperimentPrimaryDependencies:
     return _default_registry_deps()
 
-def _get_dependencies_from_registry():
+
+def _get_dependencies_from_registry() -> None:
     pass
 
-def _convert_to_requested_engine(docker_template: ContainerizationFileRepr, desired_engine: ContainerizationEngine) -> ContainerizationFileRepr:
+
+def _convert_to_requested_engine(
+    docker_template: ContainerizationFileRepr, desired_engine: ContainerizationEngine
+) -> ContainerizationFileRepr:
     with tempfile.TemporaryDirectory() as tmp_dir:
         docker_file_path = os.path.join(tmp_dir, "Dockerfile")
         with open(docker_file_path, "w") as docker_file:
@@ -96,9 +102,10 @@ def _convert_to_requested_engine(docker_template: ContainerizationFileRepr, desi
             case _:
                 return docker_template
 
+
 def generate_container_def_file(
     dependencies: ExperimentPrimaryDependencies | Path,
-    container_engine: ContainerizationEngine = ContainerizationEngine.DOCKER
+    container_engine: ContainerizationEngine = ContainerizationEngine.DOCKER,
 ) -> ContainerizationFileRepr:
     if isinstance(dependencies, Path):
         dependencies = _get_dependencies_from_pbg()

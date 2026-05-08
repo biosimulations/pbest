@@ -2,7 +2,8 @@ from pathlib import Path
 
 from pydantic.dataclasses import dataclass
 
-from pbest.utils.input_types import ExperimentPrimaryDependencies, ContainerizationEngine
+from pbest.utils.input_types import ContainerizationEngine, ExperimentPrimaryDependencies
+
 
 @dataclass(frozen=True)
 class CLIExecutionProgramArguments:
@@ -14,6 +15,7 @@ class CLIExecutionProgramArguments:
     interval: float
     output_directory: Path
 
+
 @dataclass(frozen=True)
 class CLIContainerizationProgramArguments:
     """
@@ -23,5 +25,3 @@ class CLIContainerizationProgramArguments:
     output_directory: Path
     input: ExperimentPrimaryDependencies | Path
     containerization_engine: ContainerizationEngine
-
-

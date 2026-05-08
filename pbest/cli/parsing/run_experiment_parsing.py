@@ -8,6 +8,7 @@ from pbest.cli.types import CLIExecutionProgramArguments
 
 logger = logging.getLogger(__name__)
 
+
 def add_args(sub_arg_parser: ArgumentParser) -> None:
     sub_arg_parser.add_argument("input_file_path")  # positional argument
     sub_arg_parser.add_argument("-o", "--output-directory", type=str)

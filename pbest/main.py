@@ -1,11 +1,11 @@
 from argparse import ArgumentParser
 
 from pbest.cli.containerization_cli import cli_run_containerization
+from pbest.cli.parsing import containerization_parsing, run_experiment_parsing
 from pbest.cli.run_experiment import cli_run_experiment
-from pbest.cli.parsing import run_experiment_parsing, containerization_parsing
 
 
-def cli_tool():
+def cli_tool() -> None:
     parser: ArgumentParser = ArgumentParser(
         prog="Process Bigraph Extensible Simulation Toolkit  (PBest)",
         description="""Everything required to run a process bigraph file, and containerize the environment used to run it.""",

@@ -13,7 +13,7 @@ def add_args(sub_arg_parser: ArgumentParser) -> None:
         "--target-containerization",
         choices=["docker", "apptainer", "singularity", "both"],
         help="if containerization is specified, selects whether to containerize with `docker` or `apptainer` (formerly Singularity CE)",
-        default="docker"
+        default="docker",
     )
     sub_arg_parser.add_argument(
         "-o",
@@ -46,8 +46,8 @@ def parse_container_args(parser: ArgumentParser) -> CLIContainerizationProgramAr
         containerization_engine=containerization_engine,
     )
 
-def _determine_containerization(args: Namespace) -> ContainerizationEngine:
 
+def _determine_containerization(args: Namespace) -> ContainerizationEngine:
     if args.target_containerization == "docker":
         containerization_engine = ContainerizationEngine.DOCKER
     elif args.target_containerization == "apptainer" or args.target_containerization == "singularity":
@@ -58,4 +58,3 @@ def _determine_containerization(args: Namespace) -> ContainerizationEngine:
         print("error: `target-containerization` must be `docker`, `apptainer`, or `both.", file=sys.stderr)
         sys.exit(15)
     return containerization_engine
-

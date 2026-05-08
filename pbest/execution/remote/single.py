@@ -14,7 +14,10 @@ from httpx import Client
 from pbest.execution.remote.utils import _default_client, _normalize_pbg_paths
 from pbest.utils.input_types import ExperimentSubmission
 
-async def _run_remote_helper(submission: ExperimentSubmission, client: Client, is_batch: bool = False) -> SimulationExperiment:
+
+async def _run_remote_helper(
+    submission: ExperimentSubmission, client: Client, is_batch: bool = False
+) -> SimulationExperiment:
     with tempfile.TemporaryDirectory() as tmp_dir:
         omex_file = _normalize_pbg_paths(submission.pbg, tmp_dir)
         with open(omex_file, "rb") as input_file:
@@ -29,10 +32,12 @@ async def _run_remote_helper(submission: ExperimentSubmission, client: Client, i
 
         return response.parsed
 
+
 async def run_remote_experiment(submission: ExperimentSubmission, client: Client | None = None) -> SimulationExperiment:
     if client is None:
         client = compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
     return await _run_remote_helper(submission, client)
+
 
 async def run_remote_experiment_and_wait(
     submission: ExperimentSubmission, output_dir: Path, client: Client | None = None

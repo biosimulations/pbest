@@ -14,6 +14,7 @@ from pbest.utils.input_types import ExperimentSubmission
 
 logger = logging.getLogger(__name__)
 
+
 def get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]:
     pbg_file: str | None = None
     with zipfile.ZipFile(omex_file, "r") as zf:
@@ -34,6 +35,7 @@ def get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]
                 json_string = json_string.replace(other_file, os.path.join(working_dir, other_file))
         result: dict[Any, Any] = json.loads(json_string)
         return result
+
 
 def cli_run_experiment(parser: ArgumentParser) -> None:
     log_level = os.getenv("LOGGER_LEVEL", "INFO")

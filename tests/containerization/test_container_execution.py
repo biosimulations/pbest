@@ -12,8 +12,7 @@ import docker
 import pytest
 from docker.errors import ContainerError
 
-from pbest.containerization.container_constructor import _default_registry_deps, \
-    generate_container_def_file
+from pbest.containerization.container_constructor import _default_registry_deps, generate_container_def_file
 from tests.fixtures.pb import _get_model_path
 from tests.fixtures.utils import is_docker_present
 from tests.standard_tools.test_comparison import comparison_result_dict_test
@@ -99,6 +98,7 @@ def comparison_test(comparison_document: dict[Any, Any], platform: str) -> None:
             json_result = json.load(f)["state"]["comparison_result"]["species_mse"]
 
         comparison_result_dict_test(json_result)
+
 
 @pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
 def test_execution_of_container_amd(comparison_document: dict[Any, Any]) -> None:
