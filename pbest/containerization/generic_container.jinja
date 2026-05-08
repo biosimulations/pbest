@@ -1,8 +1,8 @@
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm
+FROM astral/uv:python3.12-bookworm-slim
 
 RUN apt update
 RUN apt upgrade -y
-RUN apt install -y git curl
+RUN apt install -y git curl bzip2
 
 RUN mkdir /runtime
 WORKDIR /runtime

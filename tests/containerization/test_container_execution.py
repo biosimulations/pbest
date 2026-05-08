@@ -25,6 +25,7 @@ def build_image_and_run_experiment(
     input_file: Path,
     time_to_run: int = 1,
     show_logs: bool = False,
+    platform: str = "linux/amd64",
 ) -> None:
     experiment_deps = _default_experiment_deps()
     docker_image_path = f"{input_dir}{os.sep}Dockerfile"
@@ -40,7 +41,7 @@ def build_image_and_run_experiment(
             "docker",
             "buildx",
             "build",
-            "--platform=linux/amd64",
+            f"--platform={platform}",
             "--load",
             # "--no-cache",
             "-t",
@@ -56,17 +57,15 @@ def build_image_and_run_experiment(
         logs = client.containers.run(
             image="test_crbm_containerization:latest",
             remove=True,
+            command=f"run -o /experiment/output -n {time_to_run} /experiment/input/{input_file.name}",
             volumes={
                 input_dir: {"bind": "/experiment/input", "mode": "rw"},
                 output_dir: {"bind": "/experiment/output", "mode": "rw"},
             },
             environment={
-                "PB_INPUT_FILE_PATH": f"/experiment/input/{input_file.name}",
-                "PB_OUTPUT_DIRECTORY": "/experiment/output",
                 "LOGGER_LEVEL": "DEBUG",
-                "PB_INTERVAL": time_to_run,
             },
-            platform="linux/amd64",
+            platform=platform,
             stderr=True,
             stdout=True,
         )
@@ -76,8 +75,7 @@ def build_image_and_run_experiment(
         print(e.stderr.decode("utf-8"))
 
 
-@pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
-def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
+def comparison_test(comparison_document: dict[Any, Any], platform: str) -> None:
     with tempfile.TemporaryDirectory(delete=False) as tmpdir:
         input_dir = Path(tmpdir) / "input"
         output_dir = Path(tmpdir) / "output"
@@ -93,7 +91,7 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
             comparison_doc_str = comparison_doc_str.replace(_get_model_path(), f"/experiment/input/{model_name}")
             f.write(comparison_doc_str)
 
-        build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path)
+        build_image_and_run_experiment(input_dir, output_dir, comparison_pbg_path, platform=platform)
         # run_experiment(prog_args=ExecutionProgramArguments(input_file_path=str(comparison_pbg_path), interval=1, output_directory=Path(output_dir)))
 
         result_file = next(k for k in os.listdir(output_dir) if (".pbg" in k) and ("state" in k))
@@ -101,6 +99,15 @@ def test_execution_of_container(comparison_document: dict[Any, Any]) -> None:
             json_result = json.load(f)["state"]["comparison_result"]["species_mse"]
 
         comparison_result_dict_test(json_result)
+
+@pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
+def test_execution_of_container_amd(comparison_document: dict[Any, Any]) -> None:
+    comparison_test(comparison_document, "linux/amd64")
+
+
+# @pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
+# def test_execution_of_container_arm(comparison_document: dict[Any, Any]) -> None:
+#     comparison_test(comparison_document, "linux/arm64")
 
 
 @pytest.mark.skipif(not is_docker_present(), reason="docker daemon is not running")
