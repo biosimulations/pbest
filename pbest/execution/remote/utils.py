@@ -12,6 +12,9 @@ def _default_client() -> compose_api_client.client.Client:
 
 
 def _normalize_pbg_paths(pbg: Path | dict[str, Any], tmp_dir: str) -> Path:
+    """
+    Returns an omex file with all related files for the pbg contained within it.
+    """
     new_pbg: dict
     if isinstance(pbg, Path) and pbg.suffix == ".pbg":
         with open(pbg) as input_file:
