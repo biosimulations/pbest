@@ -46,7 +46,7 @@ def _is_bundle(omex_file: Path) -> bool:
     return res
 
 
-def _run_bundle(omex_file: Path, program_arguments: CLIExecutionProgramArguments, tmp_dir: str) -> None:
+def run_bundle(omex_file: Path, program_arguments: CLIExecutionProgramArguments, tmp_dir: str) -> None:
     with zipfile.ZipFile(omex_file, "r") as zf:
         zf.extractall(tmp_dir)
         dir_list = os.listdir(tmp_dir)
@@ -70,7 +70,7 @@ def cli_run_experiment(parser: ArgumentParser) -> None:
     pbg: Path | dict = program_arguments.file_path
     with tempfile.TemporaryDirectory() as tmp_dir:
         if isinstance(pbg, Path) and _is_bundle(pbg):
-            _run_bundle(pbg, program_arguments, tmp_dir)
+            run_bundle(pbg, program_arguments, tmp_dir)
         else:
             if program_arguments.file_path.suffix == ".omex":
                 pbg = get_pb_schema_from_omex(program_arguments.file_path, tmp_dir)
