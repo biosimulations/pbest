@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 import pbest.cli.parsing.run_experiment_parsing as cli_parsing
+from pbest.cli.types import CLIExecutionProgramArguments
 from pbest.execution.local import run_experiment
 from pbest.globals import set_logging_config
 from pbest.utils.input_types import ExperimentSubmission
@@ -45,6 +46,19 @@ def _is_bundle(omex_file: Path) -> bool:
     return res
 
 
+def _run_bundle(omex_file: Path, program_arguments: CLIExecutionProgramArguments, tmp_dir: str) -> None:
+    with zipfile.ZipFile(omex_file, "r") as zf:
+        zf.extractall(tmp_dir)
+        dir_list = os.listdir(tmp_dir)
+        for i in range(len(dir_list)):
+            path_file_name = Path(os.path.join(tmp_dir, dir_list[i]))
+            pbg = get_pb_schema_from_omex(path_file_name, os.path.join(tmp_dir, str(i)))
+            run_experiment(
+                ExperimentSubmission(pbg=pbg, interval=program_arguments.interval),
+                program_arguments.output_directory / str(i),
+            )
+
+
 def cli_run_experiment(parser: ArgumentParser) -> None:
     log_level = os.getenv("LOGGER_LEVEL", "INFO")
     set_logging_config(log_level)
@@ -55,17 +69,8 @@ def cli_run_experiment(parser: ArgumentParser) -> None:
 
     pbg: Path | dict = program_arguments.file_path
     with tempfile.TemporaryDirectory() as tmp_dir:
-        if _is_bundle(pbg):
-            with zipfile.ZipFile(pbg, "r") as zf:
-                zf.extractall(tmp_dir)
-                dir_list = os.listdir(tmp_dir)
-                for i in range(len(dir_list)):
-                    path_file_name = Path(os.path.join(tmp_dir, dir_list[i]))
-                    pbg = get_pb_schema_from_omex(path_file_name, os.path.join(tmp_dir, str(i)))
-                    run_experiment(
-                        ExperimentSubmission(pbg=pbg, interval=program_arguments.interval),
-                        program_arguments.output_directory / str(i),
-                    )
+        if isinstance(pbg, Path) and _is_bundle(pbg):
+            _run_bundle(pbg, program_arguments, tmp_dir)
         else:
             if program_arguments.file_path.suffix == ".omex":
                 pbg = get_pb_schema_from_omex(program_arguments.file_path, tmp_dir)

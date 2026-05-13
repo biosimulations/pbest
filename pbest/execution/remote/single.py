@@ -40,7 +40,10 @@ async def run_remote_experiment(submission: ExperimentSubmission, client: Client
 
 
 async def run_remote_experiment_and_wait(
-    submission: ExperimentSubmission | OmexExperimentSubmission, output_dir: Path, client: Client | None = None, seconds_to_wait: int = 600
+    submission: ExperimentSubmission | OmexExperimentSubmission,
+    output_dir: Path,
+    client: Client | None = None,
+    seconds_to_wait: int = 600,
 ) -> SimulationExperiment:
     if client is None:
         client = _default_client()
