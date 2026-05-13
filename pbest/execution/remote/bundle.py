@@ -15,7 +15,9 @@ def _bundle_maker(submissions: list[ExperimentSubmission], cur_limit,  bundle_si
     cur_uber_omex = Path(tmp_dir) / f"bundle_{cur_limit}.omex"
     with zipfile.ZipFile(cur_uber_omex, "w") as zip_ref:
         for k in range(len(sub_section)):
-            cur_omex = _normalize_pbg_paths(sub_section[k].pbg, os.path.join(tmp_dir, str(k)))
+            sub_dir = os.path.join(tmp_dir, str(k))
+            os.makedirs(sub_dir, exist_ok=True)
+            cur_omex = _normalize_pbg_paths(sub_section[k].pbg, sub_dir)
             zip_ref.write(cur_omex, f"omex_{k}.omex")
     return cur_uber_omex
 
