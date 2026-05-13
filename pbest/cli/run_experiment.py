@@ -37,6 +37,14 @@ def get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[Any, Any]
         return result
 
 
+def _is_bundle(omex_file: Path) -> bool:
+    with zipfile.ZipFile(omex_file, "r") as zf:
+        res = True
+        for file_name in zf.namelist():
+            res = res and file_name.endswith(".omex")
+    return res
+
+
 def cli_run_experiment(parser: ArgumentParser) -> None:
     log_level = os.getenv("LOGGER_LEVEL", "INFO")
     set_logging_config(log_level)
@@ -47,12 +55,25 @@ def cli_run_experiment(parser: ArgumentParser) -> None:
 
     pbg: Path | dict = program_arguments.file_path
     with tempfile.TemporaryDirectory() as tmp_dir:
-        if program_arguments.file_path.suffix == ".omex":
-            pbg = get_pb_schema_from_omex(program_arguments.file_path, tmp_dir)
-        elif program_arguments.file_path.suffix != ".pbg":
-            msg = f"Expected either .omex or .pbg. Instead got: {program_arguments.file_path}"
-            raise ValueError(msg)
-        run_experiment(
-            ExperimentSubmission(pbg=pbg, interval=program_arguments.interval), program_arguments.output_directory
-        )
-        logger.info("Finished executing experiment.")
+        if _is_bundle(pbg):
+            with zipfile.ZipFile(pbg, "r") as zf:
+                zf.extractall(tmp_dir)
+                dir_list = os.listdir(tmp_dir)
+                for i in range(len(dir_list)):
+                    path_file_name = Path(os.path.join(tmp_dir, dir_list[i]))
+                    pbg = get_pb_schema_from_omex(path_file_name, os.path.join(tmp_dir, str(i)))
+                    run_experiment(
+                        ExperimentSubmission(pbg=pbg, interval=program_arguments.interval),
+                        program_arguments.output_directory / str(i),
+                    )
+        else:
+            if program_arguments.file_path.suffix == ".omex":
+                pbg = get_pb_schema_from_omex(program_arguments.file_path, tmp_dir)
+            elif program_arguments.file_path.suffix != ".pbg":
+                msg = f"Expected either .omex or .pbg. Instead got: {program_arguments.file_path}"
+                raise ValueError(msg)
+            run_experiment(
+                ExperimentSubmission(pbg=pbg, interval=program_arguments.interval), program_arguments.output_directory
+            )
+
+    logger.info("Finished executing experiment.")
