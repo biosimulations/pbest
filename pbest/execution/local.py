@@ -4,22 +4,44 @@ import logging
 import os
 import shutil
 import tempfile
+import zipfile
 from pathlib import Path
+from typing import Any
 
 from process_bigraph import Composite, gather_emitter_results
 
 from pbest.globals import get_loaded_core
-from pbest.utils.input_types import ExperimentSubmission
+from pbest.utils.input_types import ExperimentSubmission, OmexExperimentSubmission
 
 logger = logging.getLogger(__name__)
 
 
-def run_experiment(submission: ExperimentSubmission, output_directory: Path) -> None:
-    """
-    Is the function which all other "run" related functions end up calling, both locally and on the server.
-    """
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        schema = submission.pbg
+def _get_pb_schema_from_omex(omex_file: Path, working_dir: str) -> dict[str, Any]:
+    pbg_file: str | None = None
+    with zipfile.ZipFile(omex_file, "r") as zf:
+        zf.extractall(working_dir)
+    for file_name in os.listdir(working_dir):
+        if not file_name.endswith(".pbg"):
+            continue
+        pbg_file = os.path.join(working_dir, file_name)
+        break
+
+    if pbg_file is None:
+        err = f"Could not find any PBG or JSON file in or at `{omex_file}`."
+        raise FileNotFoundError(err)
+
+    # Make relative paths in PBG absolute
+    with open(pbg_file) as input_data:
+        json_string = input_data.read()
+        for other_file in os.listdir(working_dir):
+            if not other_file.endswith(".pbg"):
+                json_string = json_string.replace(other_file, os.path.join(working_dir, other_file))
+        result: dict[str, Any] = json.loads(json_string)
+    return result
+
+
+def _get_pb_schema(submission: ExperimentSubmission | OmexExperimentSubmission, working_dir: str) -> dict[str, Any]:
+    if isinstance(submission, ExperimentSubmission):
         if isinstance(submission.pbg, Path):
             is_pbg = submission.pbg.suffix == ".pbg"
             if not is_pbg:
@@ -27,8 +49,21 @@ def run_experiment(submission: ExperimentSubmission, output_directory: Path) -> 
                 raise ValueError(err_msg)
             else:
                 with open(submission.pbg) as input_data:
-                    schema = json.load(input_data)
+                    schema: dict[str, Any] = json.load(input_data)
+                return schema
+        return submission.pbg
+    elif isinstance(submission, OmexExperimentSubmission):
+        return _get_pb_schema_from_omex(submission.omex, working_dir)
+    else:
+        raise ValueError(f"Unsupported submission type: {submission.__class__.__name__}")
 
+
+def run_experiment(submission: ExperimentSubmission | OmexExperimentSubmission, output_directory: Path) -> None:
+    """
+    Is the function which all other "run" related functions end up calling, both locally and on the server.
+    """
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        schema = _get_pb_schema(submission, tmp_dir)
         logger.debug(f"PBG schema: {schema}")
         core = get_loaded_core()
         prepared_composite = Composite(core=core, config=schema)

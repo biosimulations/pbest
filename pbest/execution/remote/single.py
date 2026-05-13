@@ -14,7 +14,10 @@ from httpx import Client
 from pbest.execution.remote.utils import _default_client, _normalize_pbg_paths
 from pbest.utils.input_types import ExperimentSubmission
 
-async def _run_remote_helper(submission: ExperimentSubmission, client: Client, is_batch: bool = False) -> SimulationExperiment:
+
+async def _run_remote_helper(
+    submission: ExperimentSubmission, client: Client, is_batch: bool = False
+) -> SimulationExperiment:
     with tempfile.TemporaryDirectory() as tmp_dir:
         omex_file = _normalize_pbg_paths(submission.pbg, tmp_dir)
         with open(omex_file, "rb") as input_file:
@@ -29,13 +32,16 @@ async def _run_remote_helper(submission: ExperimentSubmission, client: Client, i
 
         return response.parsed
 
+
 async def run_remote_experiment(submission: ExperimentSubmission, client: Client | None = None) -> SimulationExperiment:
     if client is None:
         client = compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
     return await _run_remote_helper(submission, client)
 
+
 async def run_remote_experiment_and_wait(
-    submission: ExperimentSubmission, output_dir: Path, client: Client | None = None
+    submission: ExperimentSubmission, output_dir: Path, client: Client | None = None,
+    seconds_to_wait: int = 600
 ) -> SimulationExperiment:
     if client is None:
         client = _default_client()
@@ -46,7 +52,8 @@ async def run_remote_experiment_and_wait(
         with open(omex_file, "rb") as input_file:
             sent_file = File(file_name="experiment.omex", payload=input_file)
             result, sim_id = await run_simulation_and_wait.async_call(
-                experiment_file=sent_file, interval=submission.interval, client=client
+                experiment_file=sent_file, interval=submission.interval, client=client,
+                seconds_to_wait=seconds_to_wait
             )
 
         output_name = output_dir / f"experiment_result_{sim_id.simulation_database_id}_{datetime.date.today()}"

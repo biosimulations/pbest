@@ -8,7 +8,7 @@ from compose_api_client.api.results import get_simulation_results_file, get_simu
 from compose_api_client.models import HpcRun, JobStatus, SimulationExperiment
 from httpx import Client
 
-from pbest.execution.remote.single import run_remote_experiment, _run_remote_helper
+from pbest.execution.remote.single import _run_remote_helper
 from pbest.execution.remote.utils import _default_client
 from pbest.utils.input_types import ExperimentSubmission
 

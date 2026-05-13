@@ -1,11 +1,11 @@
 [project]
 name = "pbest"
-version = "0.5.5"
+version = "0.5.7"
 description = "BioSim Registry is a project focused on delivering high quality processes and tooling in relation to process bi-graph."
 authors = [{ name = "Center for Reproducable Biological Modeling", email = "evalencia@uchc.edu" }]
 readme = "README.md"
 keywords = ['python']
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.12,<=3.14.4"
 classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
@@ -35,6 +35,10 @@ dependencies = [
     "httpx>=0.28.1",
     "pbsim-common>=0.1.2",
 ]
+
+[project.scripts]
+pbest = "pbest.main:cli_tool"
+
 
 [project.urls]
 Homepage = "https://github.com/biosimulations/biosim-registry/"
