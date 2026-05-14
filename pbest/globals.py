@@ -5,12 +5,18 @@ from pbsim_common import standard_types
 from process_bigraph import allocate_core
 
 logger = logging.getLogger(__name__)
+TRACE_LEVEL_NUM = 5
+logging.addLevelName(TRACE_LEVEL_NUM, "TRACE")
 
 loaded_core: Core | None = None
 
 
 def set_logging_config(level: str) -> None:
     logging.basicConfig(level=level)
+
+
+def get_trace_level() -> int:
+    return TRACE_LEVEL_NUM
 
 
 def get_loaded_core() -> Core:

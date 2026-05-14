@@ -10,7 +10,7 @@ from typing import Any
 
 from process_bigraph import Composite, gather_emitter_results
 
-from pbest.globals import get_loaded_core
+from pbest.globals import get_loaded_core, get_trace_level
 from pbest.utils.input_types import ExperimentSubmission, OmexExperimentSubmission
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ def run_experiment(submission: ExperimentSubmission | OmexExperimentSubmission, 
     """
     with tempfile.TemporaryDirectory() as tmp_dir:
         schema = _get_pb_schema(submission, tmp_dir)
-        logger.debug(f"PBG schema: {schema}")
+        logger.log(level=get_trace_level(), msg=f"PBG schema: {schema}")
         core = get_loaded_core()
         prepared_composite = Composite(core=core, config=schema)
 

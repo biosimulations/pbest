@@ -47,16 +47,21 @@ def _is_bundle(omex_file: Path) -> bool:
 
 
 def run_bundle(program_arguments: CLIExecutionProgramArguments, tmp_dir: str) -> None:
+    logger.info("Running Bundle...")
     with zipfile.ZipFile(program_arguments.file_path, "r") as zf:
         zf.extractall(tmp_dir)
         dir_list = os.listdir(tmp_dir)
         for i in range(len(dir_list)):
-            path_file_name = Path(os.path.join(tmp_dir, dir_list[i]))
-            pbg = get_pb_schema_from_omex(path_file_name, os.path.join(tmp_dir, str(i)))
-            run_experiment(
-                ExperimentSubmission(pbg=pbg, interval=program_arguments.interval),
-                program_arguments.output_directory / str(i),
-            )
+            try:
+                logger.info(f"Processing {dir_list[i]}")
+                path_file_name = Path(os.path.join(tmp_dir, dir_list[i]))
+                pbg = get_pb_schema_from_omex(path_file_name, os.path.join(tmp_dir, str(i)))
+                run_experiment(
+                    ExperimentSubmission(pbg=pbg, interval=program_arguments.interval),
+                    program_arguments.output_directory / str(i),
+                )
+            except Exception as e:
+                logger.error(msg=f"Failed to run: {pbg}.", exc_info=e)
 
 
 def cli_run_experiment(parser: ArgumentParser) -> None:
