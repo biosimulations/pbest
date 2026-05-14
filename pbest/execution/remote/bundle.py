@@ -10,7 +10,7 @@ from pbest.execution.remote.utils import _normalize_pbg_paths
 from pbest.utils.input_types import ExperimentSubmission, OmexExperimentSubmission
 
 def _bundle_maker(submissions: list[ExperimentSubmission], cur_limit,  bundle_size, tmp_dir: str) -> Path:
-    new_limit = cur_limit + bundle_size if cur_limit + bundle_size < len(submissions) else -1
+    new_limit = cur_limit + bundle_size if cur_limit + bundle_size < len(submissions) else len(submissions)
     sub_section = submissions[cur_limit:new_limit]
     cur_uber_omex = Path(tmp_dir) / f"bundle_{cur_limit}.omex"
     with zipfile.ZipFile(cur_uber_omex, "w") as zip_ref:
