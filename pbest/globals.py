@@ -25,5 +25,5 @@ def get_loaded_core() -> Core:
         loaded_core = allocate_core()
         for k, i in standard_types.items():
             loaded_core.register_type(k, i)
-    logger.debug(f"Link registry in use: {loaded_core.link_registry}")
+    logger.log(level=get_trace_level(), msg=f"Link registry in use: {loaded_core.link_registry}")
     return loaded_core

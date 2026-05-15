@@ -61,7 +61,7 @@ def run_bundle(program_arguments: CLIExecutionProgramArguments, tmp_dir: str) ->
                     program_arguments.output_directory / str(i),
                 )
             except Exception as e:
-                logger.error(msg=f"Failed to run: {pbg}.", exc_info=e)
+                logger.exception(msg=f"Failed to run: {pbg}.", exc_info=e)
 
 
 def cli_run_experiment(parser: ArgumentParser) -> None:

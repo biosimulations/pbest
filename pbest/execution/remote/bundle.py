@@ -6,10 +6,12 @@ from pathlib import Path
 from httpx import Client
 
 from pbest import run_remote_experiment_and_wait
+from pbest.execution.remote.batch import batch_run_remote_experiment_and_wait
 from pbest.execution.remote.utils import _normalize_pbg_paths
 from pbest.utils.input_types import ExperimentSubmission, OmexExperimentSubmission
 
-def _bundle_maker(submissions: list[ExperimentSubmission], cur_limit,  bundle_size, tmp_dir: str) -> Path:
+
+def _bundle_maker(submissions: list[ExperimentSubmission], cur_limit: int, bundle_size: int, tmp_dir: str) -> Path:
     new_limit = cur_limit + bundle_size if cur_limit + bundle_size < len(submissions) else len(submissions)
     sub_section = submissions[cur_limit:new_limit]
     cur_uber_omex = Path(tmp_dir) / f"bundle_{cur_limit}.omex"
@@ -43,3 +45,21 @@ async def bundle_and_wait(
             )
             total_subs += bundle_size
             cur_limit += bundle_size
+
+
+async def batch_bundle_and_wait(
+    submissions: list[ExperimentSubmission],
+    output_dir: Path,
+    client: Client | None = None,
+    seconds_to_wait: int = 600,
+    bundle_size: int = 100,
+) -> None:
+    cur_limit: int = 0
+    while cur_limit < len(submissions):
+        new_limit = cur_limit + bundle_size if cur_limit + bundle_size < len(submissions) else len(submissions)
+        sub_section = submissions[cur_limit:new_limit]
+        os.mkdir(output_dir / str(cur_limit))
+        await batch_run_remote_experiment_and_wait(
+            sub_section, output_dir / str(cur_limit), client=client, seconds_to_wait=seconds_to_wait
+        )
+        cur_limit += bundle_size
