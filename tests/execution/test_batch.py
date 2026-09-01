@@ -12,6 +12,7 @@ from tests.fixtures.utils import root_dir_path
 from tests.standard_tools.test_harmony import create_parameter_scan, perform_parameter_scan_comparison
 
 
+@pytest.mark.hpc
 @pytest.mark.asyncio
 async def test_batch_run_remote_experiment_and_wait(fully_registered_builder: CompositeBuilder):
     model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"

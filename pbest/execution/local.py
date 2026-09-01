@@ -55,7 +55,8 @@ def _get_pb_schema(submission: ExperimentSubmission | OmexExperimentSubmission, 
     elif isinstance(submission, OmexExperimentSubmission):
         return _get_pb_schema_from_omex(submission.omex, working_dir)
     else:
-        raise ValueError(f"Unsupported submission type: {submission.__class__.__name__}")
+        err_msg = f"Unsupported submission type: {submission.__class__.__name__}"
+        raise TypeError(err_msg)
 
 
 def run_experiment(submission: ExperimentSubmission | OmexExperimentSubmission, output_directory: Path) -> None:
