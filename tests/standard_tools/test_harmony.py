@@ -102,6 +102,7 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder, fully_regist
     perform_parameter_scan_comparison(comp.state["parameter_scan_0"]["results"])
 
 
+@pytest.mark.hpc
 @pytest.mark.asyncio
 async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder):
     model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
