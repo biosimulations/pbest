@@ -103,9 +103,13 @@ written as `<OUT_DIR>/<ENGINE_NAME>` with a `_N` suffix if the name is taken.
 
 ## Conventions
 
-- Ruff, line length 120, with `S`(bandit), `B`, `SIM`, `TRY`, `UP`, `RUF` and more enabled. The
-  codebase consistently assigns exception messages to a local first
-  (`err_msg = ...; raise ValueError(err_msg)`) rather than inlining them in the `raise`; match that.
+- Ruff, line length 120, with `S`(bandit), `B`, `SIM`, `TRY`, `UP`, `RUF` and more enabled. `TRY003`
+  is active, which is why exception messages are assigned to a local first
+  (`err_msg = ...; raise ValueError(err_msg)`) rather than inlined in the `raise` — match that, or
+  lint fails.
+- Note `[tool.ruff] target-version = "py39"` contradicts `requires-python = ">=3.12"`. Ruff therefore
+  reports `match` statements (e.g. `utils/builder.py`, `container_constructor.py`) as
+  `invalid-syntax`. Don't rewrite working `match` blocks to appease it — the target-version is the bug.
 - mypy runs with `disallow_untyped_defs = true` over `pbest/` — every function there needs
   annotations. `tests/` is not type-checked.
 - Input/output shapes are frozen pydantic dataclasses in `pbest/utils/input_types.py`
