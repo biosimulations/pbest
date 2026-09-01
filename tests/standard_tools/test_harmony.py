@@ -102,14 +102,16 @@ def test_parameter_scan(fully_registered_builder: CompositeBuilder, fully_regist
     perform_parameter_scan_comparison(comp.state["parameter_scan_0"]["results"])
 
 
+@pytest.mark.hpc
 @pytest.mark.asyncio
 async def test_remote_parameter_scan(fully_registered_builder: CompositeBuilder):
     model_path = f"{root_dir_path()}/resources/BIOMD0000000012_url.xml"
     create_parameter_scan(fully_registered_builder, model_path=model_path)
     with tempfile.TemporaryDirectory() as temp_dir:
         await run_remote_experiment_and_wait(
-            ExperimentSubmission(pbg=fully_registered_builder.get_builder_state(), interval=0), Path(temp_dir),
-            seconds_to_wait=30
+            ExperimentSubmission(pbg=fully_registered_builder.get_builder_state(), interval=0),
+            Path(temp_dir),
+            seconds_to_wait=30,
         )
 
         store_path = os.listdir(temp_dir)[0]

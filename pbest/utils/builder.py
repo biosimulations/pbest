@@ -1,6 +1,6 @@
 import copy
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from bigraph_schema import Core
 from process_bigraph import Composite
@@ -91,8 +91,8 @@ class CompositeBuilder:
         config: dict[Any, Any],
         input_mappings: dict[str, list[str]],
         is_step: bool = True,
-        config_values: Optional[dict[str, Any]] = None,
-        state_values: Optional[dict[str, Any]] = None,
+        config_values: dict[str, Any] | None = None,
+        state_values: dict[str, Any] | None = None,
     ) -> "CompositeBuilder":
         edge_type = "step" if is_step else "process"
         config_values = config_values or {}

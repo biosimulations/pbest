@@ -109,12 +109,15 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "hpc: submits a live job to the remote Compose-API and waits on SLURM; needs a reachable HPC, deselected in CI with `-m 'not hpc'`",
+]
 
 [tool.deptry.per_rule_ignores]
 DEP002 = ["bigraph-schema"]
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py312"
 line-length = 120
 fix = true
 
