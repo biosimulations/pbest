@@ -40,8 +40,7 @@ async def run_remote_experiment(submission: ExperimentSubmission, client: Client
 
 
 async def run_remote_experiment_and_wait(
-    submission: ExperimentSubmission, output_dir: Path, client: Client | None = None,
-    seconds_to_wait: int = 600
+    submission: ExperimentSubmission, output_dir: Path, client: Client | None = None, seconds_to_wait: int = 600
 ) -> SimulationExperiment:
     if client is None:
         client = _default_client()
@@ -52,8 +51,7 @@ async def run_remote_experiment_and_wait(
         with open(omex_file, "rb") as input_file:
             sent_file = File(file_name="experiment.omex", payload=input_file)
             result, sim_id = await run_simulation_and_wait.async_call(
-                experiment_file=sent_file, interval=submission.interval, client=client,
-                seconds_to_wait=seconds_to_wait
+                experiment_file=sent_file, interval=submission.interval, client=client, seconds_to_wait=seconds_to_wait
             )
 
         output_name = output_dir / f"experiment_result_{sim_id.simulation_database_id}_{datetime.date.today()}"

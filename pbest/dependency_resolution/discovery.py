@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 from pbest.utils.input_types import ExperimentPrimaryDependencies
 
@@ -9,7 +8,7 @@ from pbest.utils.input_types import ExperimentPrimaryDependencies
 # going with: `python:{source}<{package_name}>[{version_statement}]@{python_module_path_to_class_def}`
 #         ex: "python: pypi<copasi-basico[~0.8]>@basico.model_io.load_model" (if this was a class, and not a function)
 def determine_dependencies(  # noqa: C901
-    string_to_search: str, whitelist_entries: Optional[list[str]] = None
+    string_to_search: str, whitelist_entries: list[str] | None = None
 ) -> tuple[ExperimentPrimaryDependencies, str]:
     whitelist_mapping: dict[str, set[str]] | None
     if whitelist_entries is not None:
