@@ -41,7 +41,9 @@ uv run pre-commit run -a        # every hook, no mypy/deptry
 Running tests directly:
 
 ```bash
-uv run python -m pytest tests                                   # all
+uv run python -m pytest tests                                   # all, including live-HPC
+uv run python -m pytest tests -m "not hpc"                      # what CI runs (9 tests)
+uv run python -m pytest tests -m hpc                            # only the live-HPC tests
 uv run python -m pytest tests/standard_tools/test_builder.py    # one file
 uv run python -m pytest tests/execution/test_batch.py::test_batch_run_remote_experiment_and_wait
 ```
@@ -49,12 +51,19 @@ uv run python -m pytest tests/execution/test_batch.py::test_batch_run_remote_exp
 Test environment caveats:
 - `tests/containerization/test_container_execution.py` is `skipif`'d unless a Docker daemon is
   reachable; it builds the generated Dockerfile with `docker buildx` for `linux/amd64`, which is slow.
-- `tests/execution/` and parts of `tests/standard_tools/test_harmony.py` submit real jobs to the
-  remote Compose-API and poll SLURM; they need network access and can take minutes.
+- Two tests — `test_batch.py::test_batch_run_remote_experiment_and_wait` and
+  `test_harmony.py::test_remote_parameter_scan` — submit real jobs to the remote Compose-API and
+  poll SLURM. They are marked `@pytest.mark.hpc` and **deselected in CI** (`-m "not hpc"`), because
+  the HPC is not reachable from GitHub runners and they failed on every PR. Run them deliberately
+  with `-m hpc` against a reachable HPC; a plain `pytest tests` (and `make test`) still includes them.
 - Async tests are marked `@pytest.mark.asyncio` (pytest-asyncio).
 - `tests/conftest.py` star-imports `tests/fixtures/pb.py`; `comparison_document` is `autouse`.
 
-CI (`.github/workflows/ci-test.yml`) runs `make check` plus pytest + mypy on Python 3.12.
+CI (`.github/workflows/ci-test.yml`) has two jobs on Python 3.12: `quality` runs `make check`, and
+`tests-and-type-check (3.12)` runs `pytest tests -m "not hpc" --cov` plus `mypy`. Both are required
+status checks on `main`, which is protected: no direct pushes, changes land through a PR, and PRs
+merge as **merge commits** only (`gh pr merge --merge`). Repository admins can override a failing
+check, but that is an escape hatch, not the normal path.
 
 Release: `make build-and-publish` runs `publish.sh`, which requires a clean working tree, prompts for
 a version, **rewrites the `pbest_tag` default in `pbest/containerization/container_constructor.py`
@@ -121,10 +130,10 @@ written as `<OUT_DIR>/<ENGINE_NAME>` with a `_N` suffix if the name is taken.
 - Ruff, line length 120, with `S`(bandit), `B`, `SIM`, `TRY`, `UP`, `RUF` and more enabled. `TRY003`
   is active, which is why exception messages are assigned to a local first
   (`err_msg = ...; raise ValueError(err_msg)`) rather than inlined in the `raise` — match that, or
-  lint fails.
-- Note `[tool.ruff] target-version = "py39"` contradicts `requires-python = ">=3.12"`. Ruff therefore
-  reports `match` statements (e.g. `utils/builder.py`, `container_constructor.py`) as
-  `invalid-syntax`. Don't rewrite working `match` blocks to appease it — the target-version is the bug.
+  lint fails. `TRY004` also applies: the `else` of an `isinstance` chain should raise `TypeError`,
+  not `ValueError`.
+- Ruff's `target-version` is `py312`, matching `requires-python`. Keep them in sync — when they
+  drifted (target `py39`), ruff reported every `match` statement as `invalid-syntax`.
 - mypy runs with `disallow_untyped_defs = true` over `pbest/` — every function there needs
   annotations. `tests/` is not type-checked.
 - Input/output shapes are frozen pydantic dataclasses in `pbest/utils/input_types.py`
