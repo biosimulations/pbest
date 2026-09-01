@@ -12,14 +12,30 @@ reproduce the simulator environment those documents need.
 
 ## Commands
 
-Dependency management is `uv` + `Makefile`. `make help` lists all targets.
+Dependency management is `uv`; every task has a `Makefile` target. `.DEFAULT_GOAL := help`, so a
+bare `make` prints the annotated target list.
+
+| Target | Runs | Notes |
+| --- | --- | --- |
+| `make install` | `uv sync` + `uv run pre-commit install` | First-time setup |
+| `make check` | `uv lock --locked` → `pre-commit run -a` (ruff, ruff-format, file hygiene) → `mypy` → `deptry .` | The lint/typecheck gate; CI runs exactly this |
+| `make test` | `pytest --cov --cov-config=pyproject.toml --cov-report=xml` | See caveats below |
+| `make docs` | `mkdocs serve` | Live docs preview |
+| `make docs-test` | `mkdocs build -s` | Strict build; fails on warnings |
+| `make build` | `clean-build`, then `uvx --from build pyproject-build --installer uv` | Wheel into `dist/` |
+| `make clean-build` | Removes `dist/` | |
+| `make publish` | `./publish.sh` | Interactive; see Release below |
+| `make build-and-publish` | `build` then `publish` | |
+| `make help` | Prints targets with their `##` descriptions | Default goal |
+
+`make check` is all-or-nothing. To run one piece while iterating:
 
 ```bash
-make install          # uv sync + install pre-commit hooks
-make check            # uv lock --locked, pre-commit run -a (ruff + ruff-format), mypy, deptry
-make test             # pytest with coverage
-make docs             # mkdocs serve
-make build            # build wheel
+uv run ruff check pbest/        # lint only (note: ruff is configured with fix = true)
+uv run ruff format .            # formatter only
+uv run mypy                     # types only (files = ["pbest"]; tests/ is not checked)
+uv run deptry .                 # unused/missing dependency scan
+uv run pre-commit run -a        # every hook, no mypy/deptry
 ```
 
 Running tests directly:
@@ -28,7 +44,6 @@ Running tests directly:
 uv run python -m pytest tests                                   # all
 uv run python -m pytest tests/standard_tools/test_builder.py    # one file
 uv run python -m pytest tests/execution/test_batch.py::test_batch_run_remote_experiment_and_wait
-uv run mypy                                                     # types only (files = ["pbest"])
 ```
 
 Test environment caveats:
