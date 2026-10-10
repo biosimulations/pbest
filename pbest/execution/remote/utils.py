@@ -7,8 +7,8 @@ from typing import Any
 import compose_api_client
 
 
-def _default_client() -> compose_api_client.client.Client:
-    return compose_api_client.client.Client(base_url="https://compose.cam.uchc.edu")
+def _default_client() -> compose_api_client.Client:
+    return compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
 
 
 def _normalize_pbg_paths(pbg: Path | dict[str, Any], tmp_dir: str) -> Path:
