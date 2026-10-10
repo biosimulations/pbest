@@ -4,12 +4,11 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-import compose_api_client
+from compose_api_client import Client
 from compose_api_client.api.simulation import run_simulation
 from compose_api_client.models import BodyRunSimulation, SimulationExperiment
 from compose_api_client.types import File
 from compose_api_client.utils import run_simulation_and_wait
-from httpx import Client
 
 from pbest.execution.remote.utils import _default_client, _normalize_pbg_paths
 from pbest.utils.input_types import ExperimentSubmission
@@ -26,7 +25,7 @@ async def _run_remote_helper(
             response = await run_simulation.asyncio_detailed(
                 client=client, body=body, interval_time=submission.interval, batch_submission=is_batch
             )
-            if response.status_code != 200:
+            if response.status_code != 200 or not isinstance(response.parsed, SimulationExperiment):
                 err_msg = f"Error when attempting to submit simulation: {response}"
                 raise RuntimeError(err_msg)
 
@@ -35,7 +34,7 @@ async def _run_remote_helper(
 
 async def run_remote_experiment(submission: ExperimentSubmission, client: Client | None = None) -> SimulationExperiment:
     if client is None:
-        client = compose_api_client.Client(base_url="https://compose.cam.uchc.edu")
+        client = _default_client()
     return await _run_remote_helper(submission, client)
 
 
