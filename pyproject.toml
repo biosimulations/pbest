@@ -1,6 +1,6 @@
 [project]
 name = "pbest"
-version = "0.6.4"
+version = "0.6.5"
 description = "BioSim Registry is a project focused on delivering high quality processes and tooling in relation to process bi-graph."
 authors = [{ name = "Center for Reproducable Biological Modeling", email = "evalencia@uchc.edu" }]
 readme = "README.md"
@@ -33,8 +33,9 @@ dependencies = [
 #    "python-copasi",
     "compose-api-client==0.2.0",
     "httpx>=0.28.1",
-    # pinned to a commit until pbsim-common 0.1.3 is on PyPI (the BioModels-suite adapter fixes, pbsim_common#18)
-    "pbsim-common @ git+https://github.com/biosimulations/pbsim_common@584c385b4a0366ecac7fb841fc8a7427e6fec8b1",
+    # pinned to a commit until pbsim-common 0.1.3 is on PyPI (the BioModels-suite adapter fixes, pbsim_common#18,
+    # and VCellUTCStep, pbsim_common#20)
+    "pbsim-common @ git+https://github.com/biosimulations/pbsim_common@26fa156cfab2c309150be818774be4a0c307ce3b",
 ]
 
 [project.scripts]
